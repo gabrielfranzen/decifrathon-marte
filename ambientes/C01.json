@@ -1,0 +1,114 @@
+{
+  "id": "C01",
+  "nome": "Salão Principal",
+  "descricao": "Interior do castelo logo após atravessar o portão. Hub com escada central, armários flanqueando a escada (esquerdo vazio; direito com espada e cadeado LUTAR), passagem à esquerda (C02) e à direita (C03). Volta ao portão G00.",
+  "imagem": "assets/C01/C01-salao-armarios-trancado.jpg",
+  "hotspots": [
+    {
+      "id": "esquerda",
+      "left": 5.51,
+      "top": 28.18,
+      "width": 9.02,
+      "height": 47.82,
+      "zIndex": 3
+    },
+    {
+      "id": "direita",
+      "left": 85.22,
+      "top": 26.37,
+      "width": 9.83,
+      "height": 48,
+      "zIndex": 3
+    },
+    {
+      "id": "escada",
+      "left": 40.83,
+      "top": 12.79,
+      "width": 18.09,
+      "height": 51.21,
+      "zIndex": 3
+    },
+    {
+      "id": "armario-esquerdo",
+      "left": 28.56,
+      "top": 30.07,
+      "width": 9.87,
+      "height": 34.32,
+      "zIndex": 5
+    },
+    {
+      "id": "armario-direito",
+      "left": 61.53,
+      "top": 29.9,
+      "width": 10.83,
+      "height": 34.5,
+      "zIndex": 5
+    },
+    {
+      "id": "voltar",
+      "left": 30.27,
+      "top": 80.1,
+      "width": 40.11,
+      "height": 14,
+      "zIndex": 4
+    }
+  ],
+  "enigmas": [
+    {
+      "id": "E02",
+      "nome": "Armário da Espada",
+      "estado": "Cadeado de cinco letras no armário direito; pista LUTAR vem das gavetas (Rotina).",
+      "resolucao": "cadeado LUTAR -> e02Resolvido / armário abre / coletar espada"
+    }
+  ],
+  "interacoes": [
+    {
+      "id": "esquerda",
+      "tipo": "passagem",
+      "descricao": "Entra na sala das cartas (C02)."
+    },
+    {
+      "id": "direita",
+      "tipo": "passagem",
+      "descricao": "Entra na sala do arquivo de gavetas (C03)."
+    },
+    {
+      "id": "escada",
+      "tipo": "passagem",
+      "descricao": "Pergunta se quer seguir o cavaleiro; sem espada sobe ao C01B (morte)."
+    },
+    {
+      "id": "armario-esquerdo",
+      "tipo": "examinar",
+      "descricao": "Armário vazio ao lado esquerdo da escada."
+    },
+    {
+      "id": "armario-direito",
+      "tipo": "objeto-falso-3d",
+      "descricao": "Trancado: cadeado LUTAR. Aberto: recolhe a espada. Depois: vazio."
+    },
+    {
+      "id": "voltar",
+      "tipo": "passagem",
+      "descricao": "Volta ao portão (G00)."
+    }
+  ],
+  "conexoes": [
+    {
+      "para": "G00",
+      "via": "voltar",
+      "retorno": true
+    },
+    {
+      "para": "C02",
+      "via": "esquerda",
+      "retorno": true
+    },
+    {
+      "para": "C03",
+      "via": "direita",
+      "retorno": true
+    }
+  ],
+  "observacoes": "Armários flanqueiam a escada. Direito: LUTAR → espada nas Relíquias. Esquerda → C02. Direita → C03."
+}

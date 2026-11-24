@@ -1,0 +1,36 @@
+---
+description: Visual canônico dos interiores do castelo (chão xadrez, paredes, luz)
+globs: assets/**/*,ambientes/**/*,src/dados/imagens.js,src/cenas/**
+alwaysApply: true
+---
+
+# Imagens de ambientes — interior do castelo
+
+Referência canônica aprovada: `assets/C01/C01-salao-principal.jpg` (salão principal).
+Ao gerar, regenerar ou descrever **interiores** do castelo (salões, salas, corredores, andares), seguir este look — além das regras de POV, dark fantasy e anti-slop.
+
+## Materiais
+
+- **Chão:** mármore (ou similar) **xadrez preto e branco**, brilhante/polido, com reflexos contidos das luzes. Padrão legível em POV frontal.
+- **Paredes:** **gesso preto/carvão fosco**, levemente denso e frio; molduras/painéis verticais limpos quando fizer sentido. Sem pedra empilhada.
+- **Madeira:** portas, escadas, corrimãos e batentes em madeira escura (mogno/nogueira profunda), com ferragens simples de ferro quando precisar.
+- **Portas jogáveis:** porta de madeira fechada, alta e legível, com maçaneta/ferragens visíveis — hotspot óbvio de point-and-click.
+
+## Iluminação (ponto médio — não oscilar)
+
+- Tom **sombrío mas legível**: arquitetura, portas e hotspots devem se enxergar sem esforço.
+- Fontes: arandelas/velas de parede com brilho **quente e contido**; pools de luz suaves, falloff natural.
+- **Proibido:** quase preto (pretos esmagados que escondem a sala); **proibido** estourar highlights (chão branco ofuscante, bloom/HDR, glare agressivo, pós-processamento que “estoura” a imagem).
+- Contraste calmo de foto documental de mansão à noite — meio-termo entre escuro demais e claro demais.
+- **Não** “corrigir” exposição com filtros agressivos (autocontrast/gamma forte) depois da geração; se a luz estiver errada, **regenerar** com prompt de exposição equilibrada.
+
+## Composição de hub / salas
+
+- POV frontal alinhada; simetria quando o ambiente for hub (ex.: salão).
+- Só portas/aberturas que o jogo usa; evitar portas decorativas extras no fundo, no topo da escada ou em nichos que confundam navegação.
+- Sem portões/folhas de entrada em primeiro plano bloqueando esquerda/direita.
+- Poucos props; priorizar legibilidade das saídas (esquerda, direita, frente/escada).
+
+## Ao gerar novas salas internas
+
+Manter continuidade com C01: mesmo chão xadrez, mesmas paredes de gesso escuro, mesma madeira escura, mesma família de arandelas e o mesmo ponto de exposição. Mudar layout e props da sala; não reinventar a materialidade do castelo.

@@ -1,0 +1,39 @@
+{
+  "id": "C03G",
+  "nome": "Arquivo de Gavetas",
+  "descricao": "Close-up do arquivo: grade 8x5 com 40 gavetas para abrir. Sem instruções nesta vista. Volta à C03.",
+  "imagem": "assets/C03/C03-sala-gavetas.jpg",
+  "hotspots": [
+    {
+      "id": "voltar",
+      "left": 36,
+      "top": 90,
+      "width": 28,
+      "height": 8,
+      "zIndex": 20
+    }
+  ],
+  "enigmas": [
+    {
+      "id": "E02",
+      "nome": "Busca Binária (gavetas)",
+      "estado": "Abrir gavetas; caminho [20,10,15,12,11] forma LUTAR.",
+      "resolucao": "descoberta diegética da palavra LUTAR para o armário da espada em C01"
+    }
+  ],
+  "interacoes": [
+    {
+      "id": "voltar",
+      "tipo": "passagem",
+      "descricao": "Afasta do arquivo, volta à vista da sala (C03)."
+    }
+  ],
+  "conexoes": [
+    {
+      "para": "C03",
+      "via": "voltar",
+      "retorno": true
+    }
+  ],
+  "observacoes": "Overlay HTML com 40 gavetas (8x5) + Fechar as gavetas. Voltar = passagem padrão embaixo."
+}

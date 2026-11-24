@@ -1,0 +1,39 @@
+{
+  "id": "C02M",
+  "nome": "Mesa das Cartas",
+  "descricao": "Close-up da mesa: slots, cartas, pergaminho, Recolher e Validar. Cadeado na C02.",
+  "imagem": "assets/C02/C02-mesa-cartas-lisa.jpg",
+  "hotspots": [
+    {
+      "id": "voltar",
+      "left": 21.94,
+      "top": 82.03,
+      "width": 56.63,
+      "height": 13.97,
+      "zIndex": 20
+    }
+  ],
+  "enigmas": [
+    {
+      "id": "E01",
+      "nome": "As Quatro Cartas",
+      "estado": "Layout mc-* + Validar → LUTO; cadeado na vista da sala",
+      "resolucao": "ordem correta + Validar → LUTO; rodas LUTO em C02 → e01Resolvido"
+    }
+  ],
+  "interacoes": [
+    {
+      "id": "voltar",
+      "tipo": "passagem",
+      "descricao": "Afasta da mesa, volta a vista da sala (C02)."
+    }
+  ],
+  "conexoes": [
+    {
+      "para": "C02",
+      "via": "voltar",
+      "retorno": true
+    }
+  ],
+  "observacoes": "UI baseada na referencia mesa_das_cartas_referencia.html (prefixo mc-*)."
+}

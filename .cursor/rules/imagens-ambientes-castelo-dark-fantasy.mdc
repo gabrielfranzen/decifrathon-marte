@@ -1,0 +1,16 @@
+---
+description: Design do castelo em dark fantasy (não arquitetura antiga de pedra)
+globs: assets/**/*,ambientes/**/*,src/dados/imagens.js,src/cenas/**
+alwaysApply: true
+---
+
+# Imagens de ambientes — castelo dark fantasy
+
+Ao gerar, regenerar ou descrever imagens do castelo e de suas entradas/interiores:
+
+- Inspiração de design: **dark fantasy** contemporânea (referências de tom/atmosfera: Elden Ring, Resident Evil 1).
+- **Não** inspirar-se em arquitetura antiga, castelo medieval histórico ou ruína arqueológica.
+- **Proibido:** paredes de pedra empilhada, ruínas antigas, blocos de pedra aparentes, argamassa entre pedras, muralhas de cantaria tradicional.
+- As paredes devem ser de **gesso preto fosco**, com aparência **levemente metálica** — sugestão de densidade e frio — **sem** parecer metal escovado, aço ou blindagem.
+- A estrutura deve parecer **moderna-fantástica**: volumes limpos, geométricos e opressores; sofisticação sombria, não “fortaleza de pedra velha”.
+- Portas, ferragens e props do enigma podem ter ferro/madeira quando fizer sentido funcional, mas a massa arquitetônica dominante segue o gesso preto fosco, não a pedra.

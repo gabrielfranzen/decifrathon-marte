@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+.env
+.env.*
+!.env.example
+dist/
+build/
+.cache/
+*.local
+.vscode/
+!.vscode/extensions.json

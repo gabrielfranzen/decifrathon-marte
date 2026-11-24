@@ -1,0 +1,33 @@
+{
+  "id": "G00A",
+  "nome": "Floresta · Castelo",
+  "descricao": "Primeira cena jogável após a introdução: castelo visto de bem longe. Clique no caminho/portão distante para se aproximar. A aproximação é definitiva — não há retorno a esta vista.",
+  "imagem": "assets/G00A/G00A-castelo-floresta-longe.jpg",
+  "imagemAberta": "assets/G00A/G00A-castelo-floresta-longe-aberto.jpg",
+  "hotspots": [
+    {
+      "id": "aproximar-portao",
+      "left": 38.56,
+      "top": 44.4,
+      "width": 24,
+      "height": 35.51,
+      "zIndex": 3
+    }
+  ],
+  "enigmas": [],
+  "interacoes": [
+    {
+      "id": "aproximar-portao",
+      "tipo": "passagem",
+      "descricao": "Aproxima do portão e avança para G00. Sem volta."
+    }
+  ],
+  "conexoes": [
+    {
+      "para": "G00",
+      "via": "aproximar-portao",
+      "retorno": false
+    }
+  ],
+  "observacoes": "Fluxo Etapa 1: introdução → G00A → G00. Assets 16:9 POV frontal, castelo gesso preto fosco dark fantasy."
+}

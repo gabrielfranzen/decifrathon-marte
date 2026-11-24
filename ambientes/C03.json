@@ -1,0 +1,57 @@
+{
+  "id": "C03",
+  "nome": "Sala do Arquivo",
+  "descricao": "Sala lateral direita do castelo. Entrada atrás do jogador; parede frontal com arquivo de gavetas; balcões laterais com pergaminhos; sem portas visíveis. Clique aproxima (C03G, 40 gavetas). Volta ao C01.",
+  "imagem": "assets/C03/C03-sala-gavetas.jpg",
+  "hotspots": [
+    {
+      "id": "arquivo",
+      "left": 22.42,
+      "top": 12,
+      "width": 55.06,
+      "height": 55.09,
+      "zIndex": 3
+    },
+    {
+      "id": "voltar",
+      "left": 21.89,
+      "top": 88,
+      "width": 56.57,
+      "height": 10,
+      "zIndex": 4
+    }
+  ],
+  "enigmas": [
+    {
+      "id": "E02",
+      "nome": "Busca Binária (gavetas)",
+      "estado": "Aproximar arquivo → C03G; abrir gavetas; letras do caminho → LUTAR.",
+      "resolucao": "caminho [20,10,15,12,11] → etiquetas LUTAR; usar no cadeado do armário em C01"
+    }
+  ],
+  "interacoes": [
+    {
+      "id": "arquivo",
+      "tipo": "passagem",
+      "descricao": "Aproxima o arquivo de gavetas (C03G)."
+    },
+    {
+      "id": "voltar",
+      "tipo": "passagem",
+      "descricao": "Volta ao salão (C01)."
+    }
+  ],
+  "conexoes": [
+    {
+      "para": "C01",
+      "via": "voltar",
+      "retorno": true
+    },
+    {
+      "para": "C03G",
+      "via": "arquivo",
+      "retorno": true
+    }
+  ],
+  "observacoes": "POV frontal, sem portas; seleção jogável no C03G com 40 gavetas (8x5). Instruções no papel da C02."
+}

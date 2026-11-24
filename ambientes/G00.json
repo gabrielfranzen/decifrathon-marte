@@ -1,0 +1,67 @@
+{
+  "id": "G00",
+  "nome": "Portão do castelo",
+  "descricao": "Chegada definitiva após aproximar-se em G00A (sem volta). Fundo fixo do portão; medalhão é overlay separado. Hotspots: medalhão, cadeado e entrar (após abrir).",
+  "imagem": "assets/G00/G00-portao-sem-medalhao.png",
+  "imagemMedalhao": "assets/G00/G00-medalhao.png",
+  "imagemAberta": "assets/G00/G00-portao-aberto.jpg",
+  "hotspots": [
+    {
+      "id": "cadeado",
+      "left": 46.46,
+      "top": 54.25,
+      "width": 8.88,
+      "height": 7.03,
+      "zIndex": 4
+    },
+    {
+      "id": "medalhao",
+      "left": 77.46,
+      "top": 41.41,
+      "width": 5.51,
+      "height": 12,
+      "zIndex": 3
+    },
+    {
+      "id": "entrar",
+      "left": 34.54,
+      "top": 24.83,
+      "width": 30.56,
+      "height": 61.12,
+      "zIndex": 5
+    }
+  ],
+  "enigmas": [
+    {
+      "id": "E00",
+      "nome": "Portão do castelo",
+      "estado": "Medalhão coletável (overlay) vai às Relíquias. Cadeado de cinco rodas + lingueta. Solução FERRO + lingueta.",
+      "resolucao": "rodas === FERRO e lingueta acionada → e00Resolvido + portaPrincipalAberta; persiste em localStorage"
+    }
+  ],
+  "interacoes": [
+    {
+      "id": "cadeado",
+      "tipo": "objeto-falso-3d",
+      "descricao": "Hotspot no cadeado. Abre examinador do cadeado de letras."
+    },
+    {
+      "id": "medalhao",
+      "tipo": "coleta",
+      "descricao": "Hotspot + prop overlay. Clique recolhe às Relíquias e esconde só a camada do medalhão."
+    },
+    {
+      "id": "entrar",
+      "tipo": "hotspot-passagem",
+      "descricao": "Só com portão aberto: entra no salão principal (C01)."
+    }
+  ],
+  "conexoes": [
+    {
+      "para": "C01",
+      "via": "entrar",
+      "retorno": true
+    }
+  ],
+  "observacoes": "Fundo fechado: G00-portao-sem-medalhao.png. Aberto: G00-portao-aberto.jpg (portaPrincipalAberta). Medalhão é prop overlay. Hotspot entrar só com portão aberto → C01."
+}

@@ -1,0 +1,45 @@
+{
+  "id": "C01B",
+  "nome": "Corredor Superior",
+  "descricao": "Corredor no topo da escada do salão. Com espada: luta → fuga do perseguidor → corredor vazio. Sem espada: cutscene de morte. Galeria superior não é mais usada.",
+  "imagem": "assets/C01B/C01B-corredor-morte-fundo.jpg",
+  "hotspots": [
+    {
+      "id": "frente",
+      "left": 32.05,
+      "top": 22.79,
+      "width": 36,
+      "height": 54.98,
+      "zIndex": 3
+    },
+    {
+      "id": "voltar",
+      "left": 38,
+      "top": 82.7,
+      "width": 24,
+      "height": 11.3,
+      "zIndex": 4
+    }
+  ],
+  "enigmas": [],
+  "interacoes": [
+    {
+      "id": "frente",
+      "tipo": "passagem",
+      "descricao": "Avança pelo corredor (próximo ambiente ainda não explorável)."
+    },
+    {
+      "id": "voltar",
+      "tipo": "passagem",
+      "descricao": "Volta ao salão principal (C01)."
+    }
+  ],
+  "conexoes": [
+    {
+      "para": "C01",
+      "via": "voltar",
+      "retorno": true
+    }
+  ],
+  "observacoes": "POV frontal no corredor vazio após a fuga. Hotspots: avançar (frente) e voltar (escada/salão)."
+}

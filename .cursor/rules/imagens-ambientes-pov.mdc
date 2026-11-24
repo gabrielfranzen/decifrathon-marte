@@ -1,0 +1,16 @@
+---
+description: POV frontal obrigatório ao gerar ou refazer imagens de ambientes
+globs: assets/**/*,ambientes/**/*,src/dados/imagens.js,src/cenas/**
+alwaysApply: true
+---
+
+# Imagens de ambientes — POV frontal
+
+Ao gerar, regenerar ou descrever imagens de ambientes (cenas fotográficas, portões, salas, corredores, exteriores, etc.):
+
+- A câmera deve ser sempre **POV (point of view) do jogador**: o enquadramento é o que o jogador veria ao estar parado naquele ambiente.
+- A vista deve ser **frontal e alinhada** à cena — de frente para o elemento principal (portão, porta, parede, mobília interativa).
+- **Proibido:** ângulos cinematográficos, perspectiva dramática, obliqua, dutch angle, câmera baixa/alta exagerada, enquadramento “de canto” ou três quartos que deixe objetos tortos, foreshortened ou ilegíveis para point-and-click.
+- Hotspots e props do enigma (relógio, inscrição, cadeado, itens no chão) devem aparecer em posição natural e legível nessa vista frontal, sem distorção de perspectiva que atrapalhe a leitura ou o clique.
+
+Em resumo: fotografia documental frontal do ponto de vista do jogador, nunca composição de trailer ou wallpaper.

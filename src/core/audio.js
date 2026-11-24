@@ -1,0 +1,372 @@
+const CHAVE_MUDO = "oum-mudo";
+
+let contexto = null;
+let mestre = null;
+let ambienteAtual = null;
+let ruidoBuffer = null;
+let mudo = false;
+
+try {
+  mudo = window.localStorage.getItem(CHAVE_MUDO) === "1";
+} catch {
+  // Persistência opcional
+}
+
+const PERFIS_AMBIENTE = {
+  exterior: { corte: 900, volume: 0.16, drone: 55, droneVolume: 0.025, rajadas: true },
+  pedra: { corte: 420, volume: 0.1, drone: 49, droneVolume: 0.035, rajadas: false },
+};
+
+export function iniciarAudio() {
+  if (contexto) {
+    if (contexto.state === "suspended") {
+      contexto.resume();
+    }
+    return;
+  }
+
+  const Construtor = window.AudioContext || window.webkitAudioContext;
+  if (!Construtor) {
+    return;
+  }
+
+  contexto = new Construtor();
+  mestre = contexto.createGain();
+  mestre.gain.value = mudo ? 0 : 0.9;
+  mestre.connect(contexto.destination);
+
+  const tamanho = contexto.sampleRate * 2;
+  ruidoBuffer = contexto.createBuffer(1, tamanho, contexto.sampleRate);
+  const dados = ruidoBuffer.getChannelData(0);
+  let ultimo = 0;
+  for (let i = 0; i < tamanho; i += 1) {
+    const branco = Math.random() * 2 - 1;
+    ultimo = (ultimo + 0.02 * branco) / 1.02;
+    dados[i] = ultimo * 3.5;
+  }
+}
+
+function fonteRuido(loop = false) {
+  const fonte = contexto.createBufferSource();
+  fonte.buffer = ruidoBuffer;
+  fonte.loop = loop;
+  return fonte;
+}
+
+function envelope(ganho, inicio, ataque, sustentar, queda, pico) {
+  ganho.gain.setValueAtTime(0.0001, inicio);
+  ganho.gain.exponentialRampToValueAtTime(pico, inicio + ataque);
+  ganho.gain.setValueAtTime(pico, inicio + ataque + sustentar);
+  ganho.gain.exponentialRampToValueAtTime(0.0001, inicio + ataque + sustentar + queda);
+}
+
+function rajadaRuido({
+  inicio,
+  duracao,
+  frequencia,
+  q = 1,
+  tipo = "bandpass",
+  pico = 0.3,
+  ataque = 0.005,
+}) {
+  const fonte = fonteRuido();
+  const filtro = contexto.createBiquadFilter();
+  filtro.type = tipo;
+  filtro.frequency.value = frequencia;
+  filtro.Q.value = q;
+  const ganho = contexto.createGain();
+  envelope(ganho, inicio, ataque, 0, duracao, pico);
+  fonte.connect(filtro).connect(ganho).connect(mestre);
+  fonte.start(inicio, Math.random());
+  fonte.stop(inicio + duracao + 0.1);
+}
+
+function tom({
+  inicio,
+  frequencia,
+  duracao,
+  tipo = "sine",
+  pico = 0.1,
+  ataque = 0.004,
+  deslize = null,
+}) {
+  const osc = contexto.createOscillator();
+  osc.type = tipo;
+  osc.frequency.setValueAtTime(frequencia, inicio);
+  if (deslize) {
+    osc.frequency.exponentialRampToValueAtTime(deslize, inicio + duracao);
+  }
+  const ganho = contexto.createGain();
+  envelope(ganho, inicio, ataque, 0, duracao, pico);
+  osc.connect(ganho).connect(mestre);
+  osc.start(inicio);
+  osc.stop(inicio + duracao + 0.1);
+}
+
+function metal(inicio, base, pico) {
+  [1, 2.76, 5.4, 8.93].forEach((fator, i) => {
+    tom({
+      inicio,
+      frequencia: base * fator,
+      duracao: 0.5 / (i + 1) + 0.15,
+      tipo: "sine",
+      pico: pico / (i + 1.5),
+    });
+  });
+  rajadaRuido({ inicio, duracao: 0.08, frequencia: 2400, q: 2, pico: pico * 1.2 });
+}
+
+const SONS = {
+  passo(t) {
+    rajadaRuido({
+      inicio: t,
+      duracao: 0.12,
+      frequencia: 260,
+      q: 0.8,
+      tipo: "lowpass",
+      pico: 0.35,
+    });
+  },
+  papel(t) {
+    rajadaRuido({
+      inicio: t,
+      duracao: 0.18,
+      frequencia: 3200,
+      q: 0.6,
+      tipo: "highpass",
+      pico: 0.12,
+    });
+    rajadaRuido({
+      inicio: t + 0.12,
+      duracao: 0.22,
+      frequencia: 2600,
+      q: 0.6,
+      tipo: "highpass",
+      pico: 0.08,
+    });
+  },
+  acerto(t) {
+    [196, 293.66, 392].forEach((f, i) =>
+      tom({ inicio: t + i * 0.09, frequencia: f, duracao: 2.2, tipo: "sine", pico: 0.09 })
+    );
+    metal(t, 392, 0.04);
+  },
+  erro(t) {
+    tom({
+      inicio: t,
+      frequencia: 110,
+      duracao: 0.25,
+      tipo: "triangle",
+      pico: 0.18,
+      deslize: 70,
+    });
+    rajadaRuido({
+      inicio: t,
+      duracao: 0.12,
+      frequencia: 200,
+      tipo: "lowpass",
+      pico: 0.3,
+    });
+  },
+  item(t) {
+    metal(t, 520, 0.06);
+    tom({ inicio: t + 0.05, frequencia: 784, duracao: 0.9, pico: 0.05 });
+  },
+  giro(t) {
+    rajadaRuido({ inicio: t, duracao: 0.03, frequencia: 3800, q: 3, pico: 0.18 });
+    tom({ inicio: t, frequencia: 1800, duracao: 0.05, tipo: "square", pico: 0.015 });
+  },
+  metalPorta(t) {
+    rajadaRuido({
+      inicio: t,
+      duracao: 0.6,
+      frequencia: 120,
+      q: 0.6,
+      tipo: "lowpass",
+      pico: 0.7,
+    });
+    metal(t + 0.01, 150, 0.12);
+  },
+  // Passo pesado de placas (perseguidor no C01)
+  passoArmadura(t) {
+    rajadaRuido({
+      inicio: t,
+      duracao: 0.18,
+      frequencia: 140,
+      q: 0.7,
+      tipo: "lowpass",
+      pico: 0.42,
+      ataque: 0.008,
+    });
+    rajadaRuido({
+      inicio: t + 0.02,
+      duracao: 0.1,
+      frequencia: 420,
+      q: 1.1,
+      tipo: "bandpass",
+      pico: 0.16,
+    });
+    metal(t + 0.01, 180, 0.055);
+  },
+};
+
+export function tocar(nome) {
+  if (!contexto || mudo) {
+    return;
+  }
+  const som = SONS[nome];
+  if (!som) {
+    return;
+  }
+  try {
+    som(contexto.currentTime + 0.02);
+  } catch {
+    // Falhas de áudio não devem travar o jogo
+  }
+}
+
+function pararAmbiente() {
+  if (!ambienteAtual || !contexto) {
+    return;
+  }
+  const atual = ambienteAtual;
+  ambienteAtual = null;
+  const t = contexto.currentTime;
+  atual.ganho.gain.cancelScheduledValues(t);
+  atual.ganho.gain.setValueAtTime(atual.ganho.gain.value, t);
+  atual.ganho.gain.linearRampToValueAtTime(0, t + 1.2);
+  window.setTimeout(() => {
+    atual.nos.forEach((no) => {
+      try {
+        no.stop();
+      } catch {
+        // Já parado
+      }
+    });
+  }, 1400);
+}
+
+export function tocarAmbiente(perfilNome = "exterior") {
+  if (!contexto) {
+    return;
+  }
+  if (ambienteAtual && ambienteAtual.perfil === perfilNome) {
+    return;
+  }
+  pararAmbiente();
+
+  const perfil = PERFIS_AMBIENTE[perfilNome] || PERFIS_AMBIENTE.exterior;
+  const t = contexto.currentTime;
+  const ganho = contexto.createGain();
+  ganho.gain.setValueAtTime(0, t);
+  ganho.gain.linearRampToValueAtTime(1, t + 2.5);
+  ganho.connect(mestre);
+
+  const vento = fonteRuido(true);
+  const filtro = contexto.createBiquadFilter();
+  filtro.type = "lowpass";
+  filtro.frequency.value = perfil.corte;
+  const ventoGanho = contexto.createGain();
+  ventoGanho.gain.value = perfil.volume;
+  vento.connect(filtro).connect(ventoGanho).connect(ganho);
+  vento.start();
+
+  const nos = [vento];
+  if (perfil.rajadas) {
+    const lfo = contexto.createOscillator();
+    lfo.frequency.value = 0.07;
+    const lfoGanho = contexto.createGain();
+    lfoGanho.gain.value = perfil.corte * 0.45;
+    lfo.connect(lfoGanho).connect(filtro.frequency);
+    lfo.start();
+    nos.push(lfo);
+  }
+
+  const drone = contexto.createOscillator();
+  drone.type = "sine";
+  drone.frequency.value = perfil.drone;
+  const droneGanho = contexto.createGain();
+  droneGanho.gain.value = perfil.droneVolume;
+  drone.connect(droneGanho).connect(ganho);
+  drone.start();
+  nos.push(drone);
+
+  ambienteAtual = { perfil: perfilNome, ganho, nos };
+}
+
+export function pararAudioAmbiente() {
+  pararAmbiente();
+}
+
+export function alternarMudo() {
+  mudo = !mudo;
+  try {
+    window.localStorage.setItem(CHAVE_MUDO, mudo ? "1" : "0");
+  } catch {
+    // Persistência opcional
+  }
+  if (mestre) {
+    mestre.gain.value = mudo ? 0 : 0.9;
+  }
+  return mudo;
+}
+
+export function estaMudo() {
+  return mudo;
+}
+
+const AUDIOS_ARQUIVO = {
+  returnByDeath: "assets/audios/RETURN BY DEATH SOUND EFFECT.mp3",
+  knifeSlash: "assets/audios/Knife Slash.mp3",
+  bladesClash: "assets/audios/Blades sound effect.mp3",
+  knightRunning: "assets/audios/Knight running.mp3",
+};
+
+let audioArquivoAtual = null;
+
+// Toca um MP3/arquivo. Resolve quando o áudio termina (mesmo com mudo, volume 0).
+export function tocarArquivo(nome) {
+  const url = AUDIOS_ARQUIVO[nome];
+  if (!url) {
+    return Promise.resolve();
+  }
+
+  try {
+    if (audioArquivoAtual) {
+      audioArquivoAtual.pause();
+      audioArquivoAtual = null;
+    }
+
+    const audio = new Audio(encodeURI(url));
+    audioArquivoAtual = audio;
+    // Mudo: volume 0, mas o ended ainda sincroniza a cutscene
+    audio.volume = mudo ? 0 : 0.9;
+
+    return new Promise((resolver) => {
+      let finalizado = false;
+      const finalizar = () => {
+        if (finalizado) {
+          return;
+        }
+        finalizado = true;
+        if (audioArquivoAtual === audio) {
+          audioArquivoAtual = null;
+        }
+        resolver();
+      };
+
+      audio.addEventListener("ended", finalizar, { once: true });
+      audio.addEventListener("error", finalizar, { once: true });
+
+      const promessa = audio.play();
+      if (promessa && typeof promessa.catch === "function") {
+        promessa.catch(() => {
+          finalizar();
+        });
+      }
+    });
+  } catch {
+    // Falhas de áudio não devem travar o jogo
+    return Promise.resolve();
+  }
+}

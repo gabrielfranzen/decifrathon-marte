@@ -1,0 +1,83 @@
+{
+  "id": "C02",
+  "nome": "Sala das Cartas",
+  "descricao": "Sala lateral do castelo (perto da entrada): mesa com cartas, slots e pergaminho; cabideiro; porta ao salao. Clique na mesa aproxima (C02M). Cadeado na gaveta; ao abrir, cadeado some e o papel da rotina (E02) vira item coletável. Volta ao C01.",
+  "imagem": "assets/C02/C02-sala-cartas.jpg",
+  "hotspots": [
+    {
+      "id": "mesa",
+      "left": 21.55,
+      "top": 52.53,
+      "width": 55.24,
+      "height": 21.23,
+      "zIndex": 3
+    },
+    {
+      "id": "cadeado",
+      "left": 39.53,
+      "top": 76.41,
+      "width": 20.19,
+      "height": 10.94,
+      "zIndex": 5
+    },
+    {
+      "id": "papel",
+      "left": 39.59,
+      "top": 72,
+      "width": 20.36,
+      "height": 9.47,
+      "zIndex": 6
+    },
+    {
+      "id": "voltar",
+      "left": 21.84,
+      "top": 88.35,
+      "width": 54.29,
+      "height": 10,
+      "zIndex": 4
+    }
+  ],
+  "enigmas": [
+    {
+      "id": "E01",
+      "nome": "As Quatro Cartas",
+      "estado": "Aproximar mesa → C02M; cadeado LUTO nesta vista da sala.",
+      "resolucao": "cadeado LUTO -> gaveta abre / e01Resolvido / imagem sem cadeado / papel-arquivo vai às Relíquias"
+    }
+  ],
+  "interacoes": [
+    {
+      "id": "mesa",
+      "tipo": "passagem",
+      "descricao": "Camera sobe para o close-up do tampo (C02M)."
+    },
+    {
+      "id": "cadeado",
+      "tipo": "objeto-falso-3d",
+      "descricao": "Examina o cadeado de quatro letras da gaveta."
+    },
+    {
+      "id": "papel",
+      "tipo": "examinar",
+      "descricao": "Após abrir a gaveta, o papel da rotina vira relíquia no inventário."
+    },
+    {
+      "id": "voltar",
+      "tipo": "passagem",
+      "descricao": "Volta ao salao (C01)."
+    }
+  ],
+  "conexoes": [
+    {
+      "para": "C01",
+      "via": "voltar",
+      "retorno": true
+    },
+    {
+      "para": "C02M",
+      "via": "mesa",
+      "retorno": true
+    }
+  ],
+  "observacoes": "Cadeado nesta vista; ao abrir, troca para C02-sala-cartas-aberta.jpg e o papel entra direto nas Relíquias. Cartas no close-up C02M."
+}

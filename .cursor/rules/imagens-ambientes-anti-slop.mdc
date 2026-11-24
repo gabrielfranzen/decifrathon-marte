@@ -1,0 +1,15 @@
+---
+description: Evitar AI slop e over-processing nas imagens de ambientes
+globs: assets/**/*,ambientes/**/*,src/dados/imagens.js,src/cenas/**
+alwaysApply: true
+---
+
+# Imagens de ambientes — anti-slop
+
+Ao gerar, regenerar ou descrever imagens de ambientes:
+
+- **Proibido** sombreamento exagerado, riscos pretos, traços de sombra artificiais e “ink lines” que pareçam pós-processamento de IA.
+- **Proibido** musgo, vinhas, umidade ornamental ou detalhes decorativos desnecessários que não sirvam à legibilidade da cena ou do enigma.
+- A iluminação deve ser **natural e contida**: escura o bastante para o tom sombrio, mas limpa, coerente e legível — sem glow fake, sem volumetric light teatral, sem contraste artificial extremo.
+- Evitar over-processing visual: sem grão excessivo, sem sharpen agressivo, sem texturas “sujas” genéricas que mascarem a forma dos objetos.
+- Materiais e volumes devem ler com clareza para point-and-click; o realismo vem de luz e forma, não de sujeira acumulada.
