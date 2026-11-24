@@ -28,6 +28,7 @@ export const ESTADO_INICIAL = Object.freeze({
   e03Resolvido: false,
   portaPedraAberta: false,
   alavancasE03: [false, false, false, false, false, false, false, false],
+  cartaAdagasColetada: false,
 });
 
 let estado = estruturarEstado({});
@@ -101,6 +102,7 @@ function estruturarEstado(parcial) {
   base.lutaCorredorConcluida = Boolean(base.lutaCorredorConcluida);
   base.e03Resolvido = Boolean(base.e03Resolvido);
   base.portaPedraAberta = Boolean(base.portaPedraAberta);
+  base.cartaAdagasColetada = Boolean(base.cartaAdagasColetada);
   base.anelExterno = normalizarIndice(base.anelExterno);
   base.anelInterno = normalizarIndice(base.anelInterno);
 
@@ -130,6 +132,10 @@ function estruturarEstado(parcial) {
 
   if (base.espadaColetada && !base.inventario.includes("espada")) {
     base.inventario.push("espada");
+  }
+
+  if (base.cartaAdagasColetada && !base.inventario.includes("carta-adagas")) {
+    base.inventario.push("carta-adagas");
   }
 
   return base;
@@ -334,6 +340,15 @@ export function definirAlavancasE03(estados) {
   notificar();
 }
 
+export function coletarCartaAdagas() {
+  estado.cartaAdagasColetada = true;
+  if (!estado.inventario.includes("carta-adagas")) {
+    estado.inventario.push("carta-adagas");
+  }
+  persistir();
+  notificar();
+}
+
 export function concluirE03() {
   estado.e03Resolvido = true;
   estado.portaPedraAberta = true;
@@ -349,6 +364,34 @@ export function concluirE03() {
   ]);
   persistir();
   notificar();
+}
+
+// Modo Dev: antecâmara com E03 limpo (porta fechada, carta de volta, adagas em baixo)
+export function reiniciarAntecâmaraC01C() {
+  estado.e03Resolvido = false;
+  estado.portaPedraAberta = false;
+  estado.cartaAdagasColetada = false;
+  estado.alavancasE03 = normalizarAlavancasE03([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+  estado.inventario = estado.inventario.filter((id) => id !== "carta-adagas");
+  // Garante o caminho até a C01C
+  estado.lutaCorredorConcluida = true;
+  estado.espadaColetada = true;
+  if (!estado.inventario.includes("espada")) {
+    estado.inventario.push("espada");
+  }
+  estado.salaAtual = "C01C";
+  persistir();
+  notificar();
+  return obterEstado();
 }
 
 export function temItem(idItem) {

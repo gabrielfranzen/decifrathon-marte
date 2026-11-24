@@ -29,7 +29,15 @@ export const imagensAmbientes = {
   c01bLutaFuga: "assets/C01B/C01B-luta-fuga.jpg",
   // Antecâmara da porta de pedra (após o corredor)
   c01c: "assets/C01C/C01C-antecamara.jpg",
-  c01cPortaAberta: "assets/C01C/C01C-antecamara-porta-entreaberta.jpg",
+  c01cPortaAberta: "assets/C01C/C01C-antecamara-porta-entreaberta.png",
+  alavancaBase: "assets/C01C/alavanca-base.jpg",
+  alavancaHaste: "assets/C01C/alavanca-haste.jpg",
+  alavancaLigada: "assets/C01C/alavanca-ligada.jpg",
+  alavancaDesligada: "assets/C01C/alavanca-desligada.jpg",
+  paredeTochas: "assets/C01C/C01C-parede-tochas.jpg",
+  adagaCima: "assets/C01C/adaga-cima.jpg",
+  adagaBaixo: "assets/C01C/adaga-baixo.jpg",
+  cartaAdagas: "assets/C01C/C01C-carta-adagas.jpg",
 };
 
 export function obterImagemG00A({ portaPrincipalAberta }) {
@@ -103,4 +111,30 @@ export function obterImagemC01C({ portaPedraAberta = false } = {}) {
   return portaPedraAberta
     ? imagensAmbientes.c01cPortaAberta
     : imagensAmbientes.c01c;
+}
+
+export function obterImagemAdaga(ligada) {
+  return ligada ? imagensAmbientes.adagaCima : imagensAmbientes.adagaBaixo;
+}
+
+export function obterImagemCartaAdagas() {
+  return imagensAmbientes.cartaAdagas;
+}
+
+export function obterImagemAlavancaBase() {
+  return imagensAmbientes.alavancaBase;
+}
+
+export function obterImagemAlavancaHaste() {
+  return imagensAmbientes.alavancaHaste;
+}
+
+export function obterImagemAlavanca(ligada) {
+  return ligada
+    ? imagensAmbientes.alavancaLigada
+    : imagensAmbientes.alavancaDesligada;
+}
+
+export function obterImagemParedeTochas() {
+  return imagensAmbientes.paredeTochas;
 }

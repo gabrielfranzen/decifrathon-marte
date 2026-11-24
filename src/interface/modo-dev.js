@@ -46,6 +46,7 @@ function garantirPainel() {
     </div>
     <div class="modo-dev-painel__acoes">
       <button type="button" class="modo-dev-botao" data-acao="tocar-luta">Tocar luta</button>
+      <button type="button" class="modo-dev-botao" data-acao="antecamara">Antecâmara reset</button>
     </div>
   `;
 
@@ -60,6 +61,9 @@ function garantirPainel() {
   });
   painel.querySelector('[data-acao="tocar-luta"]').addEventListener("click", () => {
     window.dispatchEvent(new CustomEvent("oum:dev-luta"));
+  });
+  painel.querySelector('[data-acao="antecamara"]').addEventListener("click", () => {
+    window.dispatchEvent(new CustomEvent("oum:dev-antecamara"));
   });
 
   document.getElementById("app").append(painel);

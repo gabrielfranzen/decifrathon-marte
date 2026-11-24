@@ -24,6 +24,13 @@ export const ITENS = {
     inicial: "E",
     imagem: "assets/inventario/objeto-espada.png",
   },
+  "carta-adagas": {
+    id: "carta-adagas",
+    nome: "Mapa das adagas",
+    descricao: "Rotina booleana das oito adagas da antecâmara.",
+    inicial: "A",
+    imagem: "assets/inventario/objeto-carta-adagas.jpg",
+  },
 };
 
 let painel = null;
@@ -143,6 +150,14 @@ function renderizar() {
       if (id === "espada") {
         abrirExaminador({
           tipo: "espada",
+          nasMaos: true,
+          nomeObjeto: item.nome,
+        });
+        return;
+      }
+      if (id === "carta-adagas") {
+        abrirExaminador({
+          tipo: "carta-adagas",
           nasMaos: true,
           nomeObjeto: item.nome,
         });

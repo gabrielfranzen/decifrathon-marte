@@ -14,6 +14,10 @@ import {
   temItem,
 } from "../core/estado.js";
 import {
+  ROTINA as ROTINA_ADAGAS,
+  TITULO_CARTA_ADAGAS,
+} from "../enigmas/e03.js";
+import {
   ALFABETO,
   deslocamentoEntre,
   formatarDeslocamento,
@@ -119,6 +123,13 @@ export function abrirExaminador({
   } else if (tipo === "papel-arquivo") {
     titulo.textContent = nomeObjeto || "Rotina";
     montarPapelArquivo(corpo, rodape, { nasMaos });
+  } else if (tipo === "carta-adagas") {
+    titulo.hidden = false;
+    titulo.textContent = nomeObjeto || TITULO_CARTA_ADAGAS;
+    montarCartaAdagas(corpo, rodape, {
+      aoFechar: fechar,
+      nasMaos,
+    });
   } else if (tipo === "espada") {
     titulo.textContent = nomeObjeto || "Espada";
     montarEspada(corpo, rodape, {
@@ -217,6 +228,32 @@ function montarPapelArquivo(corpo, rodape, { nasMaos = false } = {}) {
   rodape.textContent = nasMaos
     ? "Rotina do arquivo — guardada nas Relíquias."
     : "";
+}
+
+function montarCartaAdagas(corpo, rodape, { nasMaos = false } = {}) {
+  // Mesmo enquadramento da espada: objeto no centro + título + Fechar
+  const palco = document.createElement("div");
+  palco.className = "espada-palco carta-adagas-palco";
+
+  const folha = document.createElement("div");
+  folha.className = "carta-pergaminho carta-pergaminho--reliquia";
+  folha.setAttribute("aria-label", TITULO_CARTA_ADAGAS);
+
+  const rotina = document.createElement("pre");
+  rotina.className = "carta-pergaminho__rotina";
+  rotina.translate = false;
+  rotina.textContent = ROTINA_ADAGAS.join("\n");
+
+  folha.append(rotina);
+  palco.append(folha);
+  corpo.append(palco);
+  rodape.textContent = "";
+  rodape.hidden = true;
+
+  if (!nasMaos) {
+    // Coleta já acontece na parede; examinador só visualiza
+    return;
+  }
 }
 
 function montarRelogio(corpo, rodape) {

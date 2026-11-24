@@ -1,53 +1,53 @@
 {
   "id": "C01C",
   "nome": "Antecâmara da Porta de Pedra",
-  "descricao": "Sala ampla após o corredor superior. Porta de pedra maciça ao centro; armaduras bloqueiam as aberturas laterais; alavancas à esquerda da porta e placa de instruções à direita. Enigma E03 abre a porta (entreaberta) e libera entrada — sala do cavaleiro ainda é stub.",
+  "descricao": "Sala ampla após o corredor superior. Porta ao centro; armaduras segurando espadas; oito adagas (2×4) à esquerda; carta com a rotina à direita. E03: adagas booleanas. Acerto → porta entreaberta.",
   "imagem": "assets/C01C/C01C-antecamara.jpg",
   "hotspots": [
     {
       "id": "esquerda",
-      "left": 6.37,
-      "top": 22,
-      "width": 10.36,
-      "height": 57.1,
+      "left": 5.27,
+      "top": 20,
+      "width": 12.43,
+      "height": 59.46,
       "zIndex": 3
     },
     {
       "id": "direita",
-      "left": 82.56,
-      "top": 22.99,
-      "width": 10.92,
-      "height": 54.93,
+      "left": 83.17,
+      "top": 20,
+      "width": 10.7,
+      "height": 60,
       "zIndex": 3
     },
     {
-      "id": "alavancas",
-      "left": 27.12,
-      "top": 14.63,
-      "width": 12,
-      "height": 44.94,
+      "id": "adagas",
+      "left": 28.37,
+      "top": 19.42,
+      "width": 9.67,
+      "height": 34,
       "zIndex": 4
     },
     {
-      "id": "instrucoes",
-      "left": 62.76,
-      "top": 28,
-      "width": 8.14,
-      "height": 22.72,
+      "id": "carta",
+      "left": 62.38,
+      "top": 29.94,
+      "width": 8.13,
+      "height": 17.44,
       "zIndex": 4
     },
     {
       "id": "porta",
-      "left": 42.62,
-      "top": 18.36,
-      "width": 14.71,
-      "height": 47.96,
+      "left": 42.34,
+      "top": 16,
+      "width": 15.17,
+      "height": 50.04,
       "zIndex": 5
     },
     {
       "id": "voltar",
-      "left": 31.95,
-      "top": 83.11,
+      "left": 32,
+      "top": 86,
       "width": 36,
       "height": 12,
       "zIndex": 6
@@ -56,36 +56,36 @@
   "enigmas": [
     {
       "id": "E03",
-      "nome": "As Oito Alavancas",
-      "estado": "Alavancas + placa → vetor PASSAGEM; empurrar a porta valida.",
-      "resolucao": "e03Resolvido / portaPedraAberta / imagem entreaberta / entrar → stub sala do cavaleiro"
+      "nome": "As Oito Adagas",
+      "estado": "Adagas + carta com rotina; a porta de pedra valida o vetor.",
+      "resolucao": "e03Resolvido / portaPedraAberta / imagem entreaberta"
     }
   ],
   "interacoes": [
     {
       "id": "esquerda",
       "tipo": "examinar",
-      "descricao": "Armadura bloqueia a passagem à esquerda."
+      "descricao": "Armadura com espada bloqueia a passagem à esquerda."
     },
     {
       "id": "direita",
       "tipo": "examinar",
-      "descricao": "Armadura bloqueia a passagem à direita."
+      "descricao": "Armadura com espada bloqueia a passagem à direita."
     },
     {
-      "id": "alavancas",
+      "id": "adagas",
       "tipo": "enigma",
-      "descricao": "Abre o painel das oito alavancas."
+      "descricao": "Abre o close-up das oito adagas."
     },
     {
-      "id": "instrucoes",
-      "tipo": "enigma",
-      "descricao": "Abre a placa com a rotina e a tabela de letras."
+      "id": "carta",
+      "tipo": "examinar",
+      "descricao": "Recolhe a carta direto para as Relíquias (Rotina de adagas)."
     },
     {
       "id": "porta",
       "tipo": "passagem",
-      "descricao": "Empurra a porta (valida) ou entra se já estiver entreaberta."
+      "descricao": "Tenta a porta (valida as adagas) ou entra se já estiver entreaberta."
     },
     {
       "id": "voltar",
@@ -105,5 +105,5 @@
       "retorno": true
     }
   ],
-  "observacoes": "POV frontal. Variante de imagem: C01C-antecamara-porta-entreaberta.jpg após E03."
+  "observacoes": "Cima = ligada, baixo = desligada. Rotina só na carta/relíquia."
 }

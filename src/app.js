@@ -20,6 +20,7 @@ import {
   definirSalaAtual,
   obterEstado,
   registrarLutaCorredorConcluida,
+  reiniciarAntecâmaraC01C,
   reiniciarEstado,
   temItem,
 } from "./core/estado.js";
@@ -416,6 +417,11 @@ function iniciar() {
   // Modo Dev: botão "Tocar luta" dispara a cutscene completa
   window.addEventListener("oum:dev-luta", () => {
     void executarLutaComEspada();
+  });
+  window.addEventListener("oum:dev-antecamara", () => {
+    reiniciarAntecâmaraC01C();
+    window.dispatchEvent(new CustomEvent("oum:inventario"));
+    irParaC01C();
   });
   const estado = carregarEstado();
   const podeContinuar =
