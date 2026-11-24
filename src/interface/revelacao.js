@@ -190,6 +190,9 @@ export async function iniciarRevelacao({
     chaveMontada = true;
     cancelarMarco();
 
+    // CAVALEIRO sempre em velocidade normal (áudio + cena)
+    definirTaxaTrilhaFinal(1);
+
     // Punchline em tela preta
     cena.classList.add("revelacao--chave");
     fundo.classList.add("oculto");

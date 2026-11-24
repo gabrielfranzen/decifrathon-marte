@@ -264,6 +264,18 @@ export function reiniciarEstado() {
   return obterEstado();
 }
 
+// Apaga o save por completo (incluindo finalVisto / desbloqueios do menu)
+export function apagarSalvamento() {
+  estado = estruturarEstado({});
+  try {
+    window.localStorage.removeItem(CHAVE_SAVE);
+  } catch {
+    // Storage bloqueado — ainda assim zera o estado em memória
+  }
+  notificar();
+  return obterEstado();
+}
+
 export function definirSalaAtual(salaAtual) {
   estado.salaAtual = salaAtual;
   persistir();

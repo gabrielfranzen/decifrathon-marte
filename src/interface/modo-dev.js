@@ -5,7 +5,7 @@ import {
   obterAmbiente,
   salvarHotspotsAmbiente,
 } from "../dados/ambientes.js";
-import { obterEstado } from "../core/estado.js";
+import { obterEstado, apagarSalvamento } from "../core/estado.js";
 
 async function aviso(titulo, texto) {
   const { toast } = await import("./hud.js");
@@ -326,6 +326,19 @@ export function refrescarModoDevSeAtivo() {
   }
 }
 
+function apagarSalvamentoComConfirmacao() {
+  const confirmado = window.confirm(
+    "Apagar o salvamento e resetar todo o progresso? Esta ação não pode ser desfeita."
+  );
+  if (!confirmado) {
+    return;
+  }
+
+  // Limpa o save por completo (incluindo “ver o final” / batalha) e recarrega
+  apagarSalvamento();
+  window.location.reload();
+}
+
 export function instalarAtalhosModoDev() {
   document.addEventListener("keydown", (evento) => {
     if (evento.target.closest("input, textarea, [contenteditable]")) {
@@ -335,6 +348,12 @@ export function instalarAtalhosModoDev() {
     if ((evento.key === "d" || evento.key === "D") && (evento.ctrlKey || evento.metaKey)) {
       evento.preventDefault();
       alternarModoDev();
+      return;
+    }
+    // Ctrl+E (ou Cmd+E no Mac) apaga o save e reinicia o progresso
+    if ((evento.key === "e" || evento.key === "E") && (evento.ctrlKey || evento.metaKey)) {
+      evento.preventDefault();
+      apagarSalvamentoComConfirmacao();
     }
   });
 
