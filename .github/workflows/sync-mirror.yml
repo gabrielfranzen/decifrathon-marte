@@ -10,6 +10,7 @@ on:
 
 jobs:
   sync:
+    if: github.repository == 'gabrielfranzen/decifrathon-marte'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,4 +21,8 @@ jobs:
         env:
           MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
         run: |
+          if [ -z "$MIRROR_TOKEN" ]; then
+            echo "MIRROR_TOKEN ausente"
+            exit 1
+          fi
           git push --force "https://x-access-token:${MIRROR_TOKEN}@github.com/Oicanji/decifrathon-marte.git" "HEAD:main"
