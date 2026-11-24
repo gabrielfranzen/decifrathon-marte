@@ -75,6 +75,12 @@ export function abrirExaminador({
   function fechar() {
     document.removeEventListener("keydown", aoTeclar);
     overlay.remove();
+    // Toast “Item recuperado” da espada some junto com o modal
+    if (tipo === "espada") {
+      void import("./hud.js").then(({ limparToasts }) => {
+        limparToasts();
+      });
+    }
     if (aoFechar) {
       aoFechar();
     }
@@ -136,6 +142,10 @@ export function abrirExaminador({
       aoFechar: fechar,
       nasMaos,
     });
+  } else if (tipo === "carta-relogio") {
+    titulo.hidden = false;
+    titulo.textContent = nomeObjeto || "Carta do relógio";
+    montarCartaRelogio(corpo, rodape, { nasMaos });
   } else if (tipo === "espada") {
     titulo.textContent = nomeObjeto || "Espada";
     montarEspada(corpo, rodape, {
@@ -283,6 +293,26 @@ function montarCartaAdagas(corpo, rodape, { nasMaos = false } = {}) {
   if (!nasMaos) {
     // Coleta já acontece na parede; examinador só visualiza
     return;
+  }
+}
+
+function montarCartaRelogio(corpo, rodape, { nasMaos = false } = {}) {
+  const palco = document.createElement("div");
+  palco.className = "espada-palco carta-relogio-palco";
+
+  const figura = document.createElement("img");
+  figura.className = "carta-relogio-reliquia";
+  figura.src = "assets/inventario/objeto-carta-relogio.png";
+  figura.alt = "Pergaminho com desenho de um relógio marcando três horas";
+  figura.draggable = false;
+  palco.append(figura);
+
+  corpo.append(palco);
+  rodape.textContent = nasMaos
+    ? "Desenho de um relógio — ponteiro curto nas três, longo nas doze."
+    : "";
+  if (!nasMaos) {
+    rodape.hidden = true;
   }
 }
 

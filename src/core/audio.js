@@ -342,6 +342,7 @@ export const MARCO_CAVALEIRO_SEG = 175;
 let audioArquivoAtual = null;
 let finalizarArquivoAtual = null;
 let audioTrilhaBatalha = null;
+let aoFimTrilhaBatalha = null;
 let audioTrilhaFinal = null;
 let ouvintesMarcoTrilhaFinal = [];
 
@@ -362,8 +363,8 @@ export function pararArquivo() {
   interromperArquivoAtual();
 }
 
-// Duração conhecida do Battle-soundtrack.mp3 (fallback se metadata falhar)
-const DURACAO_TRILHA_BATALHA_MS = 40370;
+// Duração conhecida do Battle-soundtrack.mp3 (~35s; fallback se metadata falhar)
+export const DURACAO_TRILHA_BATALHA_MS = 35000;
 
 // Soundtrack da batalha (uma passagem); não é interrompida por SFX curtos
 // Resolve com a duração em ms pra o minigame sincronizar o fim
@@ -378,6 +379,20 @@ export function tocarTrilhaBatalha() {
     audio.loop = false;
     audio.volume = mudo ? 0 : 0.75;
     audioTrilhaBatalha = audio;
+    audio.addEventListener(
+      "ended",
+      () => {
+        if (audioTrilhaBatalha === audio) {
+          audioTrilhaBatalha = null;
+        }
+        const cb = aoFimTrilhaBatalha;
+        aoFimTrilhaBatalha = null;
+        if (typeof cb === "function") {
+          cb();
+        }
+      },
+      { once: true }
+    );
     const promessa = audio.play();
     if (promessa && typeof promessa.catch === "function") {
       promessa.catch(() => {
@@ -411,7 +426,13 @@ export function tocarTrilhaBatalha() {
   }
 }
 
+// Vitória no minigame: dispara no fim real da trilha (evento ended)
+export function quandoTrilhaBatalhaTerminar(callback) {
+  aoFimTrilhaBatalha = typeof callback === "function" ? callback : null;
+}
+
 export function pararTrilhaBatalha() {
+  aoFimTrilhaBatalha = null;
   if (!audioTrilhaBatalha) {
     return;
   }

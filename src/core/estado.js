@@ -10,6 +10,7 @@ export const ESTADO_INICIAL = Object.freeze({
   portaPrincipalAberta: false,
   rodasE00: ["A", "A", "A", "A", "A"],
   medalhaoColetado: false,
+  cartaRelogioColetada: false,
   anelExterno: 0,
   anelInterno: 3,
   inventario: [],
@@ -116,6 +117,7 @@ function estruturarEstado(parcial) {
   base.e00Resolvido = Boolean(base.e00Resolvido);
   base.portaPrincipalAberta = Boolean(base.portaPrincipalAberta);
   base.medalhaoColetado = Boolean(base.medalhaoColetado);
+  base.cartaRelogioColetada = Boolean(base.cartaRelogioColetada);
   base.e01Resolvido = Boolean(base.e01Resolvido);
   base.gavetaCartasAberta = Boolean(base.gavetaCartasAberta);
   base.papelArquivoColetado = Boolean(base.papelArquivoColetado);
@@ -155,6 +157,10 @@ function estruturarEstado(parcial) {
 
   if (base.medalhaoColetado && !base.inventario.includes("medalhao")) {
     base.inventario.push("medalhao");
+  }
+
+  if (base.cartaRelogioColetada && !base.inventario.includes("carta-relogio")) {
+    base.inventario.push("carta-relogio");
   }
 
   if (base.papelArquivoColetado && !base.inventario.includes("papel-arquivo")) {
@@ -310,6 +316,15 @@ export function coletarMedalhao() {
   estado.medalhaoColetado = true;
   if (!estado.inventario.includes("medalhao")) {
     estado.inventario.push("medalhao");
+  }
+  persistir();
+  notificar();
+}
+
+export function coletarCartaRelogio() {
+  estado.cartaRelogioColetada = true;
+  if (!estado.inventario.includes("carta-relogio")) {
+    estado.inventario.push("carta-relogio");
   }
   persistir();
   notificar();

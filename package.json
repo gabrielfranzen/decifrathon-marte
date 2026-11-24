@@ -12,5 +12,6 @@
     "test:e01": "node scripts/testar-e01.mjs",
     "test:fluxo": "node scripts/testar-fluxo.mjs",
     "test:ui": "node scripts/testar-ui.mjs"
-  }
+  },
+  "dependencies": {}
 }

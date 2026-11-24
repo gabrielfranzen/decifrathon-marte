@@ -1,9 +1,10 @@
 {
   "id": "G00",
   "nome": "Portão do castelo",
-  "descricao": "Chegada definitiva após aproximar-se em G00A (sem volta). Fundo fixo do portão; medalhão é overlay separado. Hotspots: medalhão, cadeado e entrar (após abrir).",
+  "descricao": "Chegada definitiva após aproximar-se em G00A (sem volta). Fundo fixo do portão; medalhão e carta do relógio são overlays. Hotspots: medalhão, carta-relogio, cadeado e entrar (após abrir).",
   "imagem": "assets/G00/G00-portao-sem-medalhao.png",
   "imagemMedalhao": "assets/G00/G00-medalhao.png",
+  "imagemCartaRelogio": "assets/G00/G00-carta-relogio.png",
   "imagemAberta": "assets/G00/G00-portao-aberto.jpg",
   "hotspots": [
     {
@@ -21,6 +22,14 @@
       "width": 5.51,
       "height": 12,
       "zIndex": 3
+    },
+    {
+      "id": "carta-relogio",
+      "left": 66.8,
+      "top": 79.2,
+      "width": 8.8,
+      "height": 12.6,
+      "zIndex": 6
     },
     {
       "id": "entrar",
@@ -51,6 +60,11 @@
       "descricao": "Hotspot + prop overlay. Clique recolhe às Relíquias e esconde só a camada do medalhão."
     },
     {
+      "id": "carta-relogio",
+      "tipo": "coleta",
+      "descricao": "Carta no chão com desenho de relógio às 3h. Clique recolhe, abre o examinador e some o overlay."
+    },
+    {
       "id": "entrar",
       "tipo": "hotspot-passagem",
       "descricao": "Só com portão aberto: entra no salão principal (C01)."
@@ -63,5 +77,5 @@
       "retorno": true
     }
   ],
-  "observacoes": "Fundo fechado: G00-portao-sem-medalhao.png. Aberto: G00-portao-aberto.jpg (portaPrincipalAberta). Medalhão é prop overlay. Hotspot entrar só com portão aberto → C01."
+  "observacoes": "Fundo fechado: G00-portao-sem-medalhao.png. Aberto: G00-portao-aberto.jpg (portaPrincipalAberta). Medalhão e carta-relogio são props overlay. Hotspot entrar só com portão aberto → C01."
 }

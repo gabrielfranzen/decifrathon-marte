@@ -3579,6 +3579,35 @@ button:focus-visible {
 
 
 
+/* ===== G00 — Carta do relógio no chão ===== */
+.prop-carta-relogio {
+  filter: drop-shadow(0 4px 10px #000a);
+  object-fit: contain;
+  transform: rotate(-8deg);
+}
+
+.carta-relogio-palco {
+  width: min(90vw, 28rem);
+  min-height: auto;
+}
+
+.examinador--nas-maos .carta-relogio-palco {
+  width: min(92vw, 30rem);
+  background: transparent;
+  box-shadow: none;
+  padding: 0.5rem 0 1rem;
+}
+
+.carta-relogio-reliquia {
+  display: block;
+  width: min(78vw, 22rem);
+  max-height: min(62vh, 28rem);
+  margin: 0 auto;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 12px 28px #000a;
+}
+
 /* ===== E03 — Oito adagas (close-up sem folha) ===== */
 .prop-carta-adagas {
   mix-blend-mode: lighten;

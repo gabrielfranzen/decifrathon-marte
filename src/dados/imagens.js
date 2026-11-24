@@ -6,6 +6,8 @@ export const imagensAmbientes = {
   g00: "assets/G00/G00-portao-sem-medalhao.png",
   // Prop overlay do medalhão (some na coleta)
   g00Medalhao: "assets/G00/G00-medalhao.png",
+  // Carta no chão com desenho do relógio às 3h (some na coleta)
+  g00CartaRelogio: "assets/G00/G00-carta-relogio.png",
   g00Aberto: "assets/G00/G00-portao-aberto.jpg",
   c01: "assets/C01/C01-salao-armarios-trancado.jpg",
   c01AbertoEspada: "assets/C01/C01-salao-armarios-aberto-espada.jpg",
@@ -60,6 +62,10 @@ export function obterImagemG00({ portaPrincipalAberta } = {}) {
 
 export function obterImagemMedalhaoG00() {
   return imagensAmbientes.g00Medalhao;
+}
+
+export function obterImagemCartaRelogioG00() {
+  return imagensAmbientes.g00CartaRelogio;
 }
 
 export function obterImagemC01({ armarioAberto = false, espadaColetada = false } = {}) {

@@ -28,6 +28,13 @@ export const ITENS = {
     inicial: "M",
     imagem: "assets/inventario/objeto-medalhao-base.png",
   },
+  "carta-relogio": {
+    id: "carta-relogio",
+    nome: "Carta do relógio",
+    descricao: "Pergaminho com um relógio desenhado: três horas em ponto.",
+    inicial: "R",
+    imagem: "assets/inventario/objeto-carta-relogio.png",
+  },
   "papel-arquivo": {
     id: "papel-arquivo",
     nome: "Rotina",
@@ -159,6 +166,14 @@ function renderizar() {
       if (id === "medalhao") {
         abrirExaminador({
           tipo: "medalhao",
+          nasMaos: true,
+          nomeObjeto: item.nome,
+        });
+        return;
+      }
+      if (id === "carta-relogio") {
+        abrirExaminador({
+          tipo: "carta-relogio",
           nasMaos: true,
           nomeObjeto: item.nome,
         });

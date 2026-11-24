@@ -135,10 +135,26 @@ export function toast(kicker, titulo) {
   }
   ui.toasts.append(caixa);
   window.requestAnimationFrame(() => caixa.classList.add("visivel"));
-  window.setTimeout(() => {
+  const sumir = window.setTimeout(() => {
     caixa.classList.remove("visivel");
     window.setTimeout(() => caixa.remove(), 700);
   }, 3600);
+  caixa.dataset.timerSumir = String(sumir);
+}
+
+// Remove toasts na hora (ex.: ao fechar o modal do item anunciado)
+export function limparToasts() {
+  if (!ui?.toasts) {
+    return;
+  }
+  for (const caixa of [...ui.toasts.children]) {
+    const timer = Number(caixa.dataset.timerSumir);
+    if (timer) {
+      window.clearTimeout(timer);
+    }
+    caixa.classList.remove("visivel");
+    caixa.remove();
+  }
 }
 
 export function pulsarReliquias() {

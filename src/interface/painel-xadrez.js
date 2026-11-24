@@ -102,6 +102,11 @@ export function abrirPainelXadrez({
 
   const mensagem = criarElemento("p", "mensagem-xadrez");
   mensagem.setAttribute("role", "status");
+  const titulo = criarElemento(
+    "p",
+    "frase-caca",
+    "Aplique o último movimento."
+  );
 
   function limparTemporizadores() {
     temporizadores.forEach((id) => window.clearTimeout(id));
@@ -247,7 +252,6 @@ export function abrirPainelXadrez({
     }
     pecas.get(id)?.classList.add("ameacando");
     pecas.get("heroi")?.classList.add("em-perigo");
-    definirMensagem("Você está sob ameaça.", "perigo");
   }
 
   function animarLances(lances, ameaca) {
@@ -267,7 +271,8 @@ export function abrirPainelXadrez({
   function vencer() {
     concluido = true;
     desenharCasas();
-    definirMensagem("XEQUE-MATE", "mate");
+    titulo.textContent = "Checkmate";
+    definirMensagem("");
     tocar("acerto");
     const heroi = pecas.get("heroi");
     const rei = pecas.get("rei");
@@ -325,16 +330,12 @@ export function abrirPainelXadrez({
       agendar(() => {
         heroi.classList.add("caida");
         tocar("erro");
-        definirMensagem(
-          `${resultado.nome} o alcançou em ${destino}.`,
-          "perigo"
-        );
       }, 820);
       agendar(() => {
         partida = criarPartida();
         montarPecas();
         desenharCasas();
-        definirMensagem("Tudo recomeça.", "perigo");
+        definirMensagem("");
         travado = false;
       }, 2400);
       return;
@@ -352,9 +353,7 @@ export function abrirPainelXadrez({
   }
 
   const cabeca = criarElemento("div", "xadrez-frases");
-  cabeca.append(
-    criarElemento("p", "frase-caca", "Aplique o último movimento.")
-  );
+  cabeca.append(titulo);
 
   painel.append(cabeca, cena3d, mensagem);
   cena.append(painel);
@@ -396,7 +395,7 @@ export function abrirPainelXadrez({
   montarPecas();
   desenharCasas();
   if (concluido) {
-    definirMensagem("XEQUE-MATE", "mate");
+    titulo.textContent = "Checkmate";
   }
 
   const alvo = container || document.getElementById("app");

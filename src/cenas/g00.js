@@ -5,9 +5,11 @@ import {
 } from "../dados/ambientes.js";
 import {
   obterImagemG00,
+  obterImagemCartaRelogioG00,
   obterImagemMedalhaoG00,
 } from "../dados/imagens.js";
 import {
+  coletarCartaRelogio,
   coletarMedalhao,
   definirSalaAtual,
   obterEstado,
@@ -35,6 +37,15 @@ const FALLBACK_MEDALHAO = {
   zIndex: 3,
 };
 
+// Carta no chão à direita do portão; modo dev ajusta via hotspot carta-relogio
+const FALLBACK_CARTA_RELOGIO = {
+  left: 66.8,
+  top: 79.2,
+  width: 8.8,
+  height: 12.6,
+  zIndex: 6,
+};
+
 function avisarModoDev() {
   import("../interface/modo-dev.js").then(({ refrescarModoDevSeAtivo }) => {
     refrescarModoDevSeAtivo();
@@ -42,14 +53,19 @@ function avisarModoDev() {
 }
 
 function descricaoAlt(estado) {
+  const partes = [];
   if (estado.portaPrincipalAberta) {
-    return estado.medalhaoColetado
-      ? "Portão do castelo aberto; o medalhão já foi recolhido"
-      : "Portão do castelo aberto";
+    partes.push("Portão do castelo aberto");
+  } else {
+    partes.push("Portão do castelo fechado, à noite");
   }
-  return estado.medalhaoColetado
-    ? "Portão fechado; o medalhão já foi recolhido"
-    : "Portão do castelo fechado, à noite";
+  if (estado.medalhaoColetado) {
+    partes.push("o medalhão já foi recolhido");
+  }
+  if (!estado.cartaRelogioColetada) {
+    partes.push("uma carta no chão");
+  }
+  return partes.join("; ");
 }
 
 function estilo(ambiente, id, fallback) {
@@ -77,9 +93,10 @@ export async function criarG00({ aoEntrar } = {}) {
       idPendente: "G00",
     });
 
-  // Camada do medalhão: some na coleta; o fundo nunca troca por causa disso
+  // Props: medalhão na parede + carta no chão; some na coleta; fundo fixo
   const camadaProps = document.createElement("div");
   camadaProps.className = "camada-props";
+
   const imgMedalhao = document.createElement("img");
   imgMedalhao.className = "prop-cena prop-medalhao";
   imgMedalhao.dataset.prop = "medalhao";
@@ -87,7 +104,16 @@ export async function criarG00({ aoEntrar } = {}) {
   imgMedalhao.alt = "";
   imgMedalhao.draggable = false;
   imgMedalhao.setAttribute("aria-hidden", "true");
-  camadaProps.append(imgMedalhao);
+
+  const imgCarta = document.createElement("img");
+  imgCarta.className = "prop-cena prop-carta-relogio";
+  imgCarta.dataset.prop = "carta-relogio";
+  imgCarta.src = obterImagemCartaRelogioG00();
+  imgCarta.alt = "";
+  imgCarta.draggable = false;
+  imgCarta.setAttribute("aria-hidden", "true");
+
+  camadaProps.append(imgMedalhao, imgCarta);
   parallax.insertBefore(camadaProps, camadaHotspots);
 
   function atualizarPropMedalhao() {
@@ -101,6 +127,19 @@ export async function criarG00({ aoEntrar } = {}) {
       zIndex: caixa.zIndex,
     });
     imgMedalhao.hidden = Boolean(estado.medalhaoColetado);
+  }
+
+  function atualizarPropCarta() {
+    estado = obterEstado();
+    const caixa = estilo(ambiente, "carta-relogio", FALLBACK_CARTA_RELOGIO);
+    Object.assign(imgCarta.style, {
+      left: caixa.left,
+      top: caixa.top,
+      width: caixa.width,
+      height: caixa.height,
+      zIndex: caixa.zIndex,
+    });
+    imgCarta.hidden = Boolean(estado.cartaRelogioColetada);
   }
 
   function atualizarFoto() {
@@ -130,6 +169,7 @@ export async function criarG00({ aoEntrar } = {}) {
   function refrescarCena() {
     atualizarFoto();
     atualizarPropMedalhao();
+    atualizarPropCarta();
     montarHotspots();
     avisarModoDev();
   }
@@ -138,7 +178,7 @@ export async function criarG00({ aoEntrar } = {}) {
     limparHotspots();
     estado = obterEstado();
 
-    // Só medalhão, cadeado e (após abrir) entrar — posições pelo modo dev
+    // Medalhão, carta, cadeado e (após abrir) entrar — posições pelo modo dev
     if (!estado.portaPrincipalAberta) {
       camadaHotspots.append(
         criarHotspot({
@@ -180,6 +220,28 @@ export async function criarG00({ aoEntrar } = {}) {
       );
     }
 
+    if (!estado.cartaRelogioColetada) {
+      camadaHotspots.append(
+        criarHotspot({
+          id: "carta-relogio",
+          rotulo: "Recolher a carta",
+          estilo: estilo(ambiente, "carta-relogio", FALLBACK_CARTA_RELOGIO),
+          aoAtivar: () => {
+            tocar("papel");
+            coletarCartaRelogio();
+            window.dispatchEvent(new CustomEvent("oum:inventario"));
+            anunciarItem("carta-relogio");
+            refrescarCena();
+            abrirExaminador({
+              tipo: "carta-relogio",
+              nasMaos: true,
+              nomeObjeto: "Carta do relógio",
+            });
+          },
+        })
+      );
+    }
+
     if (estado.portaPrincipalAberta) {
       camadaHotspots.append(
         criarHotspot({
@@ -211,6 +273,7 @@ export async function criarG00({ aoEntrar } = {}) {
   }
 
   atualizarPropMedalhao();
+  atualizarPropCarta();
   montarHotspots();
   window.addEventListener("oum:inventario", refrescarCena);
   window.dispatchEvent(new CustomEvent("oum:cena", { detail: { id: "G00" } }));
