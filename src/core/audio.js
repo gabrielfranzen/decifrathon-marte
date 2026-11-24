@@ -422,9 +422,9 @@ let indiceParry = 0;
 
 // Perfis distintos pra cada Blade sound (mesmo arquivo-base soa diferente)
 const PERFIS_PARRY = [
-  { taxa: 0.86, volume: 0.92 },
-  { taxa: 1.0, volume: 0.88 },
-  { taxa: 1.18, volume: 0.95 },
+  { taxa: 0.86, volume: 0.78 },
+  { taxa: 1.0, volume: 0.75 },
+  { taxa: 1.18, volume: 0.81 },
 ];
 
 // Alterna 1 → 2 → 3 e aplica tom/velocidade + micro-variação
@@ -449,7 +449,8 @@ export function tocarHitEspada() {
 }
 
 // Toca um MP3/arquivo. Resolve quando termina, erra ou é interrompido.
-export function tocarArquivo(nome) {
+// opcoes.duracaoMaxMs: corta o áudio após N ms (ex.: Return by Death curto)
+export function tocarArquivo(nome, opcoes = {}) {
   const url = AUDIOS_ARQUIVO[nome];
   if (!url) {
     return Promise.resolve();
@@ -463,17 +464,25 @@ export function tocarArquivo(nome) {
     // Mudo: volume 0, mas o ended ainda sincroniza a cutscene
     audio.volume = mudo ? 0 : 0.9;
 
+    const duracaoMaxMs = Number(opcoes.duracaoMaxMs);
+
     return new Promise((resolver) => {
       let finalizado = false;
+      let temporizadorCorte = null;
       const finalizar = () => {
         if (finalizado) {
           return;
         }
         finalizado = true;
+        if (temporizadorCorte !== null) {
+          window.clearTimeout(temporizadorCorte);
+          temporizadorCorte = null;
+        }
         if (finalizarArquivoAtual === finalizar) {
           finalizarArquivoAtual = null;
         }
         if (audioArquivoAtual === audio) {
+          audio.pause();
           audioArquivoAtual = null;
         }
         resolver();
@@ -482,6 +491,12 @@ export function tocarArquivo(nome) {
       finalizarArquivoAtual = finalizar;
       audio.addEventListener("ended", finalizar, { once: true });
       audio.addEventListener("error", finalizar, { once: true });
+
+      if (Number.isFinite(duracaoMaxMs) && duracaoMaxMs > 0) {
+        temporizadorCorte = window.setTimeout(() => {
+          finalizar();
+        }, duracaoMaxMs);
+      }
 
       const promessa = audio.play();
       if (promessa && typeof promessa.catch === "function") {

@@ -22,7 +22,7 @@ const JANELA_ACERTO_FRACAO = 0.28;
 // Anel nasce bem maior (sensação de encolher mais rápido), mas chega no halo no mesmo tempo
 const ESCALA_ANEL_INICIO = 3.55;
 // Halo fixo (área válida) — não cresce com o start do anel
-const ESCALA_ZONA = 1.38;
+const ESCALA_ZONA = 1.65;
 // Folga pra “encostar” na borda já contar como válido
 const FOLGA_TOQUE_HALO = 0.05;
 // % da animação em que o anel toca o halo (mesmo pacing de antes)

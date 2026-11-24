@@ -1128,7 +1128,6 @@ function montarCadeado(corpo, rodape, { aoFechar, aoAtualizarCena }) {
 
   lingueta.addEventListener("click", () => {
     if (travada) {
-      rodape.textContent = "O ferrolho já cedeu.";
       return;
     }
 
@@ -1137,7 +1136,6 @@ function montarCadeado(corpo, rodape, { aoFechar, aoAtualizarCena }) {
 
     if (!resultado.ok) {
       tocar("erro");
-      rodape.textContent = "A lingueta bate no ferrolho e volta.";
       maisTarde(() => {
         if (!haste.isConnected) {
           return;
@@ -1156,7 +1154,6 @@ function montarCadeado(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     travada = true;
     digitacao.desabilitar();
     tocar("acerto");
-    rodape.textContent = "O ferrolho cede.";
     haste.classList.add("presa");
     caixa.classList.add("aberto");
     concluirE00();
@@ -1172,7 +1169,7 @@ function montarCadeado(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   });
 
   corpo.append(cadeado, digitacao.elemento);
-  rodape.textContent = travada ? "O cadeado já foi aberto." : "";
+  rodape.textContent = "";
   rodas.forEach((_, indice) => pintar(indice, 0));
 }
 
@@ -1369,7 +1366,6 @@ function montarCadeadoArmario(corpo, rodape, { aoFechar, aoAtualizarCena }) {
 
   lingueta.addEventListener("click", () => {
     if (travada) {
-      rodape.textContent = "O armário já está aberto.";
       return;
     }
 
@@ -1378,7 +1374,6 @@ function montarCadeadoArmario(corpo, rodape, { aoFechar, aoAtualizarCena }) {
 
     if (!resultado.ok) {
       tocar("erro");
-      rodape.textContent = "A lingueta bate no ferrolho e volta.";
       maisTarde(() => {
         if (!haste.isConnected) {
           return;
@@ -1397,7 +1392,6 @@ function montarCadeadoArmario(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     travada = true;
     digitacao.desabilitar();
     tocar("acerto");
-    rodape.textContent = "O ferrolho cede. O armário abre.";
     haste.classList.add("presa");
     caixa.classList.add("aberto");
     concluirE02();
@@ -1413,7 +1407,7 @@ function montarCadeadoArmario(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   });
 
   corpo.append(cadeado, digitacao.elemento);
-  rodape.textContent = travada ? "O armário já foi aberto." : "";
+  rodape.textContent = "";
   rodas.forEach((_, indice) => pintar(indice, 0));
 }
 
@@ -1610,7 +1604,6 @@ function montarCadeadoCartas(corpo, rodape, { aoFechar, aoAtualizarCena }) {
 
   lingueta.addEventListener("click", () => {
     if (travada) {
-      rodape.textContent = "A gaveta já está aberta.";
       return;
     }
 
@@ -1619,7 +1612,6 @@ function montarCadeadoCartas(corpo, rodape, { aoFechar, aoAtualizarCena }) {
 
     if (!resultado.ok) {
       tocar("erro");
-      rodape.textContent = "A lingueta bate no ferrolho e volta.";
       maisTarde(() => {
         if (!haste.isConnected) {
           return;
@@ -1638,7 +1630,6 @@ function montarCadeadoCartas(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     travada = true;
     digitacao.desabilitar();
     tocar("acerto");
-    rodape.textContent = "O ferrolho cede. A gaveta abre.";
     haste.classList.add("presa");
     caixa.classList.add("aberto");
     concluirE01();
@@ -1654,6 +1645,6 @@ function montarCadeadoCartas(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   });
 
   corpo.append(cadeado, digitacao.elemento);
-  rodape.textContent = travada ? "A gaveta já foi aberta." : "";
+  rodape.textContent = "";
   rodas.forEach((_, indice) => pintar(indice, 0));
 }

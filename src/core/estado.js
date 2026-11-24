@@ -25,6 +25,9 @@ export const ESTADO_INICIAL = Object.freeze({
   espadaColetada: false,
   viuPerseguidorC01: false,
   lutaCorredorConcluida: false,
+  e03Resolvido: false,
+  portaPedraAberta: false,
+  alavancasE03: [false, false, false, false, false, false, false, false],
 });
 
 let estado = estruturarEstado({});
@@ -62,6 +65,13 @@ function normalizarGavetasAbertas(abertas) {
   return normalizadas;
 }
 
+function normalizarAlavancasE03(estados) {
+  if (!Array.isArray(estados) || estados.length !== 8) {
+    return [...ESTADO_INICIAL.alavancasE03];
+  }
+  return estados.map((valor) => Boolean(valor));
+}
+
 function estruturarEstado(parcial) {
   const base = {
     ...ESTADO_INICIAL,
@@ -74,6 +84,7 @@ function estruturarEstado(parcial) {
       : [...ESTADO_INICIAL.inventario],
     casasCartas: normalizarCasasCartas(parcial.casasCartas),
     gavetasAbertas: normalizarGavetasAbertas(parcial.gavetasAbertas),
+    alavancasE03: normalizarAlavancasE03(parcial.alavancasE03),
   };
 
   base.versao = VERSAO_SAVE;
@@ -88,6 +99,8 @@ function estruturarEstado(parcial) {
   base.espadaColetada = Boolean(base.espadaColetada);
   base.viuPerseguidorC01 = Boolean(base.viuPerseguidorC01);
   base.lutaCorredorConcluida = Boolean(base.lutaCorredorConcluida);
+  base.e03Resolvido = Boolean(base.e03Resolvido);
+  base.portaPedraAberta = Boolean(base.portaPedraAberta);
   base.anelExterno = normalizarIndice(base.anelExterno);
   base.anelInterno = normalizarIndice(base.anelInterno);
 
@@ -101,6 +114,10 @@ function estruturarEstado(parcial) {
 
   if (base.e02Resolvido) {
     base.buscaGavetasOk = true;
+  }
+
+  if (base.e03Resolvido) {
+    base.portaPedraAberta = true;
   }
 
   if (base.medalhaoColetado && !base.inventario.includes("medalhao")) {
@@ -307,6 +324,29 @@ export function registrarPerseguidorC01Visto() {
 
 export function registrarLutaCorredorConcluida() {
   estado.lutaCorredorConcluida = true;
+  persistir();
+  notificar();
+}
+
+export function definirAlavancasE03(estados) {
+  estado.alavancasE03 = normalizarAlavancasE03(estados);
+  persistir();
+  notificar();
+}
+
+export function concluirE03() {
+  estado.e03Resolvido = true;
+  estado.portaPedraAberta = true;
+  estado.alavancasE03 = normalizarAlavancasE03([
+    true,
+    false,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+  ]);
   persistir();
   notificar();
 }

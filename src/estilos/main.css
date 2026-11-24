@@ -1170,8 +1170,8 @@ button:focus-visible {
 
 .minigame-aparadas__dica-zona {
   position: absolute;
-  width: 2.3rem;
-  height: 2.3rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 50%;
   background: rgba(232, 210, 150, 0.5);
   border: 1px solid rgba(240, 220, 170, 0.55);
@@ -1221,8 +1221,8 @@ button:focus-visible {
 }
 
 .minigame-aparadas__dica-anel--encaixe {
-  width: 2.3rem;
-  height: 2.3rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-color: #ffe6a8;
   box-shadow: 0 0 10px rgba(255, 210, 120, 0.55);
 }
@@ -1288,7 +1288,7 @@ button:focus-visible {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  transform: scale(var(--escala-zona, 1.38));
+  transform: scale(var(--escala-zona, 1.65));
   z-index: 5;
   cursor: crosshair;
 }
@@ -1301,7 +1301,7 @@ button:focus-visible {
   background: rgba(232, 210, 150, 0.5);
   border: 2px solid rgba(240, 220, 170, 0.55);
   box-shadow: 0 0 18px rgba(220, 190, 130, 0.25);
-  transform: scale(var(--escala-zona, 1.38));
+  transform: scale(var(--escala-zona, 1.65));
   pointer-events: none;
   z-index: 0;
 }
@@ -1374,7 +1374,7 @@ button:focus-visible {
   }
   /* Mesmo tempo até encostar no halo; trecho inicial mais longo = encolhe mais rápido */
   72% {
-    transform: scale(var(--escala-zona, 1.38));
+    transform: scale(var(--escala-zona, 1.65));
     opacity: 1;
   }
   100% {
@@ -3547,5 +3547,283 @@ button:focus-visible {
 
   .eg-gaveta-lado {
     width: 28px;
+  }
+}
+
+/* ===== E03 � Oito alavancas (C01C) ===== */
+.al-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 2vw, 28px);
+  background: radial-gradient(ellipse at 50% 20%, #1a1510cc, #050403f2 70%);
+  box-sizing: border-box;
+}
+
+.al-painel {
+  width: min(100%, 1080px);
+  max-height: min(92vh, 900px);
+  overflow: auto;
+  border-radius: 10px;
+  padding: clamp(14px, 1.8vw, 24px);
+  box-sizing: border-box;
+  color: #e8dcc4;
+  background:
+    linear-gradient(180deg, #2a1d14ee, #140e0aee),
+    repeating-linear-gradient(92deg, #3a2718 0 7px, #312113 7px 12px);
+  box-shadow:
+    0 24px 70px #000d,
+    inset 0 0 0 2px #6a4c33,
+    inset 0 0 0 10px #24160e;
+}
+
+.al-painel--tremer {
+  animation: al-tremer 0.42s ease;
+}
+
+@keyframes al-tremer {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.al-titulo {
+  margin: 0 0 0.85rem;
+  text-align: center;
+  font-family: var(--fonte-display);
+  font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #f0e2c4;
+}
+
+.al-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr);
+  gap: clamp(12px, 1.6vw, 22px);
+  align-items: start;
+}
+
+.al-layout--foco-placa .al-coluna--placa {
+  outline: 1px solid #c4a06a55;
+  border-radius: 6px;
+}
+
+.al-coluna--alavancas,
+.al-coluna--placa {
+  min-width: 0;
+}
+
+.al-grade {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.al-alavanca {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 118px;
+  padding: 0.55rem 0.4rem 0.45rem;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #d8c9a8;
+  background:
+    linear-gradient(180deg, #3a2a1c, #1a120c),
+    #1a120c;
+  box-shadow:
+    inset 0 0 0 1px #5a4330,
+    inset 0 -10px 18px #0008,
+    0 6px 14px #0007;
+}
+
+.al-alavanca:focus-visible {
+  outline: 2px solid #d3ba7e;
+  outline-offset: 2px;
+}
+
+.al-alavanca:disabled {
+  cursor: default;
+  opacity: 0.92;
+}
+
+.al-alavanca__rotulo {
+  font-family: var(--fonte-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+}
+
+.al-alavanca__haste {
+  width: 10px;
+  height: 42px;
+  border-radius: 3px 3px 2px 2px;
+  background: linear-gradient(90deg, #6a6e74, #c5c9ce 45%, #4a4e54);
+  box-shadow: 0 2px 4px #0008;
+  transform-origin: 50% 90%;
+  transform: rotate(-28deg);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.al-alavanca.ligada .al-alavanca__haste {
+  transform: rotate(28deg);
+  box-shadow:
+    0 0 10px #d4a84a88,
+    0 2px 4px #0008;
+  background: linear-gradient(90deg, #8a6a2a, #e8c56a 45%, #6a4e1a);
+}
+
+.al-alavanca__base {
+  width: 36px;
+  height: 12px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #4a3a2a, #1e160f);
+  box-shadow: inset 0 1px 0 #6a5640;
+}
+
+.al-alavanca__estado {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.al-alavanca.ligada .al-alavanca__estado {
+  color: #e8c56a;
+  opacity: 1;
+}
+
+.al-folha {
+  padding: clamp(10px, 1.2vw, 16px);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #ebe1c8, #d4c4a0);
+  color: #2a1f12;
+  box-shadow:
+    inset 0 0 0 1px #b8a57a,
+    0 8px 20px #0006;
+}
+
+.al-folha__titulo {
+  margin: 0 0 0.45rem;
+  font-family: var(--fonte-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.al-folha__titulo + .al-folha__titulo,
+.al-tabela + .al-folha__titulo {
+  margin-top: 0.9rem;
+}
+
+.al-rotina {
+  margin: 0 0 0.75rem;
+  padding-left: 1.2rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.al-rotina li {
+  margin-bottom: 0.2rem;
+}
+
+.al-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.al-tabela th,
+.al-tabela td {
+  padding: 0.28rem 0.2rem;
+  border: 1px solid #a89268;
+}
+
+.al-tabela thead th {
+  background: #cbb892;
+  font-weight: 600;
+}
+
+.al-tabela tbody th {
+  text-align: left;
+  padding-left: 0.45rem;
+  background: #d9cba8;
+  font-weight: 600;
+}
+
+.al-tabela td.letra-lida {
+  background: #5a3f18;
+  color: #f5e6b8;
+  font-weight: 700;
+  box-shadow: inset 0 0 0 1px #c4a06a;
+}
+
+.al-palavra {
+  margin: 0.75rem 0 0.35rem;
+  text-align: center;
+  font-family: var(--fonte-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.28em;
+  color: #3a2a16;
+}
+
+.al-palavra--revelada {
+  color: #5a3f18;
+  text-shadow: 0 0 12px #c4a06a66;
+}
+
+.al-nota {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #4a3a28;
+}
+
+.al-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.al-tentar:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+@media (max-width: 820px) {
+  .al-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .al-grade {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .al-grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

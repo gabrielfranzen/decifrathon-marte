@@ -9,6 +9,7 @@ import {
   criarCenaMorteEspadada,
   trocarFrameCutscene,
 } from "./cenas/c01b.js";
+import { criarC01C, criarStubSalaCavaleiro } from "./cenas/c01c.js";
 import { criarC02 } from "./cenas/c02.js";
 import { criarC02M } from "./cenas/c02m.js";
 import { criarC03 } from "./cenas/c03.js";
@@ -38,11 +39,15 @@ const DURACAO_FLASH_MS = 650;
 // 1s desembainhar (frame 01) + 2,5s combate (frame 02); depois corta o Blades e vai pra fuga
 const DURACAO_LUTA_DESEMBAINHAR_MS = 1000;
 const DURACAO_LUTA_COMBATE_MS = 2500;
+// Mortes seguintes: só o primeiro segundo do Return by Death
+const DURACAO_RETURN_BY_DEATH_CURTO_MS = 1250;
 
 const app = document.getElementById("app");
 let cenaAtual = null;
 let trocandoCena = false;
 let cenaPendente = null;
+// Sobrevive ao reiniciarEstado — 1ª morte ouve o áudio completo
+let jaMorreuUmaVez = false;
 
 function aguardar(ms) {
   return new Promise((resolver) => {
@@ -152,7 +157,30 @@ function irParaCorredorC01B() {
     () =>
       criarC01B({
         aoVoltar: irParaC01,
-        // aoAvancar: próximo trecho do corredor ainda não existe
+        aoAvancar: irParaC01C,
+      }),
+    { comVeil: true }
+  );
+}
+
+function irParaC01C() {
+  tocar("passo");
+  void mostrarCena(
+    () =>
+      criarC01C({
+        aoVoltar: irParaCorredorC01B,
+        aoEntrar: irParaStubSalaCavaleiro,
+      }),
+    { comVeil: true }
+  );
+}
+
+function irParaStubSalaCavaleiro() {
+  tocar("passo");
+  void mostrarCena(
+    () =>
+      criarStubSalaCavaleiro({
+        aoVoltar: irParaC01C,
       }),
     { comVeil: true }
   );
@@ -261,7 +289,14 @@ async function reiniciarAposMorte() {
   );
 
   preto.remove();
-  tocarArquivo("returnByDeath");
+  if (jaMorreuUmaVez) {
+    tocarArquivo("returnByDeath", {
+      duracaoMaxMs: DURACAO_RETURN_BY_DEATH_CURTO_MS,
+    });
+  } else {
+    tocarArquivo("returnByDeath");
+    jaMorreuUmaVez = true;
+  }
   iniciarEfeitoAbrirOlhos();
 }
 
@@ -341,6 +376,16 @@ function retomarPartida() {
     return;
   }
 
+  if (estado.salaAtual === "C01C") {
+    irParaC01C();
+    return;
+  }
+
+  if (estado.salaAtual === "C01D") {
+    irParaStubSalaCavaleiro();
+    return;
+  }
+
   if (estado.salaAtual === "C01") {
     irParaC01();
     return;
@@ -381,12 +426,16 @@ function iniciar() {
     estado.salaAtual === "C03G" ||
     estado.salaAtual === "C01" ||
     estado.salaAtual === "C01B" ||
+    estado.salaAtual === "C01C" ||
+    estado.salaAtual === "C01D" ||
     estado.salaAtual === "G00" ||
     estado.salaAtual === "G00A" ||
     estado.e00Resolvido ||
     estado.e01Resolvido ||
     estado.e02Resolvido ||
+    estado.e03Resolvido ||
     estado.portaPrincipalAberta ||
+    estado.portaPedraAberta ||
     estado.medalhaoColetado;
 
   mostrarCena(() =>

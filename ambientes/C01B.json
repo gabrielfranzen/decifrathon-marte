@@ -1,7 +1,7 @@
 {
   "id": "C01B",
   "nome": "Corredor Superior",
-  "descricao": "Corredor no topo da escada do salão. Com espada: luta → fuga do perseguidor → corredor vazio. Sem espada: cutscene de morte. Galeria superior não é mais usada.",
+  "descricao": "Corredor no topo da escada do salão. Com espada: luta → fuga do perseguidor → corredor vazio → C01C. Sem espada: cutscene de morte.",
   "imagem": "assets/C01B/C01B-corredor-morte-fundo.jpg",
   "hotspots": [
     {
@@ -26,7 +26,7 @@
     {
       "id": "frente",
       "tipo": "passagem",
-      "descricao": "Avança pelo corredor (próximo ambiente ainda não explorável)."
+      "descricao": "Avança pelo corredor até a antecâmara da porta de pedra (C01C)."
     },
     {
       "id": "voltar",
@@ -39,7 +39,12 @@
       "para": "C01",
       "via": "voltar",
       "retorno": true
+    },
+    {
+      "para": "C01C",
+      "via": "frente",
+      "retorno": true
     }
   ],
-  "observacoes": "POV frontal no corredor vazio após a fuga. Hotspots: avançar (frente) e voltar (escada/salão)."
+  "observacoes": "POV frontal no corredor vazio após a fuga. Hotspots: avançar (C01C) e voltar (escada/salão)."
 }

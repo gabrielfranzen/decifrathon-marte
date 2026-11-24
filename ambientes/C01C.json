@@ -1,0 +1,109 @@
+{
+  "id": "C01C",
+  "nome": "Antecâmara da Porta de Pedra",
+  "descricao": "Sala ampla após o corredor superior. Porta de pedra maciça ao centro; armaduras bloqueiam as aberturas laterais; alavancas à esquerda da porta e placa de instruções à direita. Enigma E03 abre a porta (entreaberta) e libera entrada — sala do cavaleiro ainda é stub.",
+  "imagem": "assets/C01C/C01C-antecamara.jpg",
+  "hotspots": [
+    {
+      "id": "esquerda",
+      "left": 6.37,
+      "top": 22,
+      "width": 10.36,
+      "height": 57.1,
+      "zIndex": 3
+    },
+    {
+      "id": "direita",
+      "left": 82.56,
+      "top": 22.99,
+      "width": 10.92,
+      "height": 54.93,
+      "zIndex": 3
+    },
+    {
+      "id": "alavancas",
+      "left": 27.12,
+      "top": 14.63,
+      "width": 12,
+      "height": 44.94,
+      "zIndex": 4
+    },
+    {
+      "id": "instrucoes",
+      "left": 62.76,
+      "top": 28,
+      "width": 8.14,
+      "height": 22.72,
+      "zIndex": 4
+    },
+    {
+      "id": "porta",
+      "left": 42.62,
+      "top": 18.36,
+      "width": 14.71,
+      "height": 47.96,
+      "zIndex": 5
+    },
+    {
+      "id": "voltar",
+      "left": 31.95,
+      "top": 83.11,
+      "width": 36,
+      "height": 12,
+      "zIndex": 6
+    }
+  ],
+  "enigmas": [
+    {
+      "id": "E03",
+      "nome": "As Oito Alavancas",
+      "estado": "Alavancas + placa → vetor PASSAGEM; empurrar a porta valida.",
+      "resolucao": "e03Resolvido / portaPedraAberta / imagem entreaberta / entrar → stub sala do cavaleiro"
+    }
+  ],
+  "interacoes": [
+    {
+      "id": "esquerda",
+      "tipo": "examinar",
+      "descricao": "Armadura bloqueia a passagem à esquerda."
+    },
+    {
+      "id": "direita",
+      "tipo": "examinar",
+      "descricao": "Armadura bloqueia a passagem à direita."
+    },
+    {
+      "id": "alavancas",
+      "tipo": "enigma",
+      "descricao": "Abre o painel das oito alavancas."
+    },
+    {
+      "id": "instrucoes",
+      "tipo": "enigma",
+      "descricao": "Abre a placa com a rotina e a tabela de letras."
+    },
+    {
+      "id": "porta",
+      "tipo": "passagem",
+      "descricao": "Empurra a porta (valida) ou entra se já estiver entreaberta."
+    },
+    {
+      "id": "voltar",
+      "tipo": "passagem",
+      "descricao": "Volta ao corredor superior (C01B)."
+    }
+  ],
+  "conexoes": [
+    {
+      "para": "C01B",
+      "via": "voltar",
+      "retorno": true
+    },
+    {
+      "para": "C01D",
+      "via": "porta",
+      "retorno": true
+    }
+  ],
+  "observacoes": "POV frontal. Variante de imagem: C01C-antecamara-porta-entreaberta.jpg após E03."
+}
