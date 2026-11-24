@@ -308,6 +308,12 @@ export function alternarMudo() {
   if (mestre) {
     mestre.gain.value = mudo ? 0 : 0.9;
   }
+  if (audioTrilhaBatalha) {
+    audioTrilhaBatalha.volume = mudo ? 0 : 0.75;
+  }
+  if (audioTrilhaFinal) {
+    audioTrilhaFinal.volume = mudo ? 0 : 0.8;
+  }
   return mudo;
 }
 
@@ -325,13 +331,19 @@ const AUDIOS_ARQUIVO = {
   bladeParry3: "assets/audios/battle/Blade sound 3.mp3",
   bladeHit: "assets/audios/battle/Blade hit sound.mp3",
   battleSoundtrack: "assets/audios/battle/Battle-soundtrack.mp3",
+  finalSoundtrack: "assets/Final-soundtrack.mp3",
 };
 
 const NOMES_PARRY = ["bladeParry1", "bladeParry2", "bladeParry3"];
 
+// Segundo 2:55 da Final-soundtrack — punchline CAVALEIRO
+export const MARCO_CAVALEIRO_SEG = 175;
+
 let audioArquivoAtual = null;
 let finalizarArquivoAtual = null;
 let audioTrilhaBatalha = null;
+let audioTrilhaFinal = null;
+let ouvintesMarcoTrilhaFinal = [];
 
 function interromperArquivoAtual() {
   if (audioArquivoAtual) {
@@ -405,6 +417,110 @@ export function pararTrilhaBatalha() {
   }
   audioTrilhaBatalha.pause();
   audioTrilhaBatalha = null;
+}
+
+function aplicarPreservaPitch(audio, preservar) {
+  if ("preservesPitch" in audio) {
+    audio.preservesPitch = preservar;
+  }
+  if ("mozPreservesPitch" in audio) {
+    audio.mozPreservesPitch = preservar;
+  }
+  if ("webkitPreservesPitch" in audio) {
+    audio.webkitPreservesPitch = preservar;
+  }
+}
+
+function notificarMarcosTrilhaFinal() {
+  if (!audioTrilhaFinal) {
+    return;
+  }
+  const tempo = audioTrilhaFinal.currentTime || 0;
+  const restantes = [];
+  for (const ouvinte of ouvintesMarcoTrilhaFinal) {
+    if (tempo >= ouvinte.segundos) {
+      try {
+        ouvinte.callback();
+      } catch {
+        // Callback do marco não deve quebrar o áudio
+      }
+    } else {
+      restantes.push(ouvinte);
+    }
+  }
+  ouvintesMarcoTrilhaFinal = restantes;
+}
+
+// Soundtrack do final: começa no fade do xadrez; sem loop
+export function tocarTrilhaFinal({ taxa = 1 } = {}) {
+  pararTrilhaFinal();
+  pararAmbiente();
+  const url = AUDIOS_ARQUIVO.finalSoundtrack;
+  if (!url) {
+    return;
+  }
+  try {
+    const audio = new Audio(encodeURI(url));
+    audio.loop = false;
+    audio.volume = mudo ? 0 : 0.8;
+    const taxaSegura = Number.isFinite(taxa) && taxa > 0 ? taxa : 1;
+    audio.playbackRate = taxaSegura;
+    // Mantém o tom ao acelerar com o slider dos créditos
+    aplicarPreservaPitch(audio, true);
+    audioTrilhaFinal = audio;
+    audio.addEventListener("timeupdate", notificarMarcosTrilhaFinal);
+    const promessa = audio.play();
+    if (promessa && typeof promessa.catch === "function") {
+      promessa.catch(() => {});
+    }
+  } catch {
+    // Falha de autoplay — a sequência visual segue
+  }
+}
+
+export function pararTrilhaFinal() {
+  ouvintesMarcoTrilhaFinal = [];
+  if (!audioTrilhaFinal) {
+    return;
+  }
+  audioTrilhaFinal.pause();
+  audioTrilhaFinal = null;
+}
+
+export function obterTempoTrilhaFinal() {
+  return audioTrilhaFinal?.currentTime || 0;
+}
+
+export function trilhaFinalAtiva() {
+  return Boolean(audioTrilhaFinal);
+}
+
+export function definirTaxaTrilhaFinal(taxa) {
+  if (!audioTrilhaFinal) {
+    return;
+  }
+  const taxaSegura = Math.min(5, Math.max(0.5, Number(taxa) || 1));
+  audioTrilhaFinal.playbackRate = taxaSegura;
+  aplicarPreservaPitch(audioTrilhaFinal, true);
+}
+
+// Dispara quando currentTime da faixa atinge `segundos` (posição na track)
+export function aoChegarMarcoTrilhaFinal(segundos, callback) {
+  const alvo = Number(segundos);
+  if (!Number.isFinite(alvo) || typeof callback !== "function") {
+    return () => {};
+  }
+  if (audioTrilhaFinal && audioTrilhaFinal.currentTime >= alvo) {
+    callback();
+    return () => {};
+  }
+  const ouvinte = { segundos: alvo, callback };
+  ouvintesMarcoTrilhaFinal.push(ouvinte);
+  return () => {
+    ouvintesMarcoTrilhaFinal = ouvintesMarcoTrilhaFinal.filter(
+      (item) => item !== ouvinte
+    );
+  };
 }
 
 // SFX curto que não mata a trilha / tocarArquivo atual

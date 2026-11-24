@@ -1,5 +1,7 @@
 import { tocar } from "../core/audio.js";
 import { concluirE04, obterEstado } from "../core/estado.js";
+
+const DURACAO_FADE_SAIDA_MS = 1400;
 import {
   ARQUIVOS,
   ROTEIRO,
@@ -54,7 +56,13 @@ function criarBotao(classe, texto, rotulo) {
 }
 
 // Close-up da Última Partida. aoVencer dispara após o mate (já com e04 marcado).
-export function abrirPainelXadrez({ container, aoFechar, aoVencer } = {}) {
+// reproduzirVitoria: abre no lance final e anima o cavalo tomando o rei (replay do final).
+export function abrirPainelXadrez({
+  container,
+  aoFechar,
+  aoVencer,
+  reproduzirVitoria = false,
+} = {}) {
   const existente = document.querySelector(".xz-root");
   if (existente) {
     existente.remove();
@@ -62,8 +70,10 @@ export function abrirPainelXadrez({ container, aoFechar, aoVencer } = {}) {
 
   const estadoJogo = obterEstado();
   let partida = criarPartida();
-  let concluido = Boolean(estadoJogo.e04Resolvido);
-  let travado = false;
+  let concluido = reproduzirVitoria
+    ? false
+    : Boolean(estadoJogo.e04Resolvido);
+  let travado = Boolean(reproduzirVitoria);
   const pecas = new Map();
   const temporizadores = [];
   const agendar = (funcao, ms) =>
@@ -105,6 +115,32 @@ export function abrirPainelXadrez({ container, aoFechar, aoVencer } = {}) {
     if (aoFechar) {
       aoFechar();
     }
+  }
+
+  // Fade lento do tabuleiro; a mesa (capacete) já foi trocada em aoVencer
+  function fecharComFade(aoTerminar) {
+    limparTemporizadores();
+    document.removeEventListener("keydown", aoTeclar);
+    if (movimentoReduzido()) {
+      raiz.remove();
+      if (aoFechar) {
+        aoFechar();
+      }
+      if (aoTerminar) {
+        aoTerminar();
+      }
+      return;
+    }
+    raiz.classList.add("xz-root--saindo");
+    window.setTimeout(() => {
+      raiz.remove();
+      if (aoFechar) {
+        aoFechar();
+      }
+      if (aoTerminar) {
+        aoTerminar();
+      }
+    }, DURACAO_FADE_SAIDA_MS);
   }
 
   function aoTeclar(evento) {
@@ -211,7 +247,7 @@ export function abrirPainelXadrez({ container, aoFechar, aoVencer } = {}) {
     }
     pecas.get(id)?.classList.add("ameacando");
     pecas.get("heroi")?.classList.add("em-perigo");
-    definirMensagem("Ele está sob ameaça.", "perigo");
+    definirMensagem("Você está sob ameaça.", "perigo");
   }
 
   function animarLances(lances, ameaca) {
@@ -245,10 +281,11 @@ export function abrirPainelXadrez({ container, aoFechar, aoVencer } = {}) {
     agendar(() => rei?.classList.add("tomado"), 1650);
     agendar(() => {
       concluirE04();
-      fechar();
+      // Capacete na mesa já por baixo do fade; soundtrack só no coletar elmo
       if (aoVencer) {
         aoVencer();
       }
+      fecharComFade();
     }, 3200);
   }
 
@@ -316,12 +353,7 @@ export function abrirPainelXadrez({ container, aoFechar, aoVencer } = {}) {
 
   const cabeca = criarElemento("div", "xadrez-frases");
   cabeca.append(
-    criarElemento("p", "frase-caca", "Aplique o último movimento."),
-    criarElemento(
-      "p",
-      "frase-caca frase-menor",
-      "A partida ainda aguarda o lance final."
-    )
+    criarElemento("p", "frase-caca", "Aplique o último movimento.")
   );
 
   painel.append(cabeca, cena3d, mensagem);
@@ -353,7 +385,7 @@ export function abrirPainelXadrez({ container, aoFechar, aoVencer } = {}) {
     })
   );
 
-  if (concluido) {
+  if (concluido || reproduzirVitoria) {
     ROTEIRO.forEach(({ destino }) => {
       const resultado = jogar(partida, destino);
       partida = resultado.lances
@@ -369,6 +401,13 @@ export function abrirPainelXadrez({ container, aoFechar, aoVencer } = {}) {
 
   const alvo = container || document.getElementById("app");
   alvo?.append(raiz);
+
+  if (reproduzirVitoria) {
+    // Um instante com o tabuleiro aberto, depois a animação do mate
+    agendar(() => {
+      vencer();
+    }, 700);
+  }
 
   return { fechar, raiz };
 }

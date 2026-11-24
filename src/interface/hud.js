@@ -36,7 +36,7 @@ export function garantirHud() {
   const acoes = document.createElement("div");
   acoes.className = "hud-acoes";
 
-  ui.botaoReliquias = criarBotao("hud-botao", "Relíquias", "Abrir Relíquias");
+  ui.botaoReliquias = criarBotao("hud-botao", "Inventário", "Abrir Inventário");
   ui.botaoSom = criarBotao(
     "hud-botao hud-icone",
     estaMudo() ? "🔇" : "🔊",
@@ -158,7 +158,7 @@ function atualizarContagemReliquias() {
     return;
   }
   const n = obterEstado().inventario.length;
-  ui.botaoReliquias.textContent = n > 0 ? `Relíquias (${n})` : "Relíquias";
+  ui.botaoReliquias.textContent = n > 0 ? `Inventário (${n})` : "Inventário";
 }
 
 export function aguardar(ms) {

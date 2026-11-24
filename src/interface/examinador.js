@@ -33,6 +33,7 @@ import {
   TITULO_PAPEL_ARQUIVO,
   validarCadeadoE02,
 } from "../enigmas/e02.js";
+import { obterRelato } from "../dados/relatos-arquivo.js";
 
 export function abrirExaminador({
   tipo,
@@ -42,6 +43,7 @@ export function abrirExaminador({
   // Item do inventário: só fundo escurecido, nome, objeto e Fechar
   nasMaos = false,
   nomeObjeto = "",
+  idRelato = "",
 }) {
   const existente = document.querySelector(".examinador");
   if (existente) {
@@ -123,6 +125,10 @@ export function abrirExaminador({
   } else if (tipo === "papel-arquivo") {
     titulo.textContent = nomeObjeto || "Rotina";
     montarPapelArquivo(corpo, rodape, { nasMaos });
+  } else if (tipo === "relato-arquivo") {
+    const relato = obterRelato(idRelato);
+    titulo.textContent = nomeObjeto || relato?.nome || "Relato";
+    montarRelatoArquivo(corpo, rodape, { relato, nasMaos });
   } else if (tipo === "carta-adagas") {
     titulo.hidden = false;
     titulo.textContent = nomeObjeto || TITULO_CARTA_ADAGAS;
@@ -184,7 +190,7 @@ function montarEspada(
     botaoColetar.addEventListener("click", () => {
       coletarEspada();
       botaoColetar.remove();
-      rodape.textContent = "A espada foi guardada nas Relíquias.";
+      rodape.textContent = "A espada foi guardada no Inventário.";
       window.dispatchEvent(new CustomEvent("oum:inventario"));
       import("./inventario.js").then(({ anunciarItem }) => {
         anunciarItem("espada");
@@ -205,7 +211,7 @@ function montarEspada(
 
   corpo.append(palco);
   rodape.textContent = temItem("espada")
-    ? "Você já guardou a espada nas Relíquias."
+    ? "Você já guardou a espada no Inventário."
     : "A lâmina descansa no armário aberto.";
 }
 
@@ -226,8 +232,32 @@ function montarPapelArquivo(corpo, rodape, { nasMaos = false } = {}) {
   folha.append(tituloFolha, rotina);
   corpo.append(folha);
   rodape.textContent = nasMaos
-    ? "Rotina do arquivo — guardada nas Relíquias."
+    ? "Rotina do arquivo — guardada no Inventário."
     : "";
+}
+
+function montarRelatoArquivo(corpo, rodape, { relato = null, nasMaos = false } = {}) {
+  const folha = document.createElement("div");
+  folha.className = "papel-arquivo";
+  folha.setAttribute(
+    "aria-label",
+    relato?.titulo || relato?.nome || "Relato do arquivo"
+  );
+
+  const tituloFolha = document.createElement("h3");
+  tituloFolha.className = "papel-arquivo__titulo";
+  tituloFolha.textContent = relato?.titulo || relato?.nome || "Relato";
+
+  const corpoTexto = document.createElement("pre");
+  corpoTexto.className = "papel-arquivo__rotina";
+  corpoTexto.translate = false;
+  corpoTexto.textContent = (relato?.corpo || ["Documento ilegível."]).join(
+    "\n\n"
+  );
+
+  folha.append(tituloFolha, corpoTexto);
+  corpo.append(folha);
+  rodape.textContent = nasMaos ? "Guardado no Inventário." : "";
 }
 
 function montarCartaAdagas(corpo, rodape, { nasMaos = false } = {}) {
@@ -695,7 +725,7 @@ function montarMedalhao(
     botaoColetar.addEventListener("click", () => {
       coletarMedalhao();
       botaoColetar.remove();
-      rodape.textContent = "O medalhão foi guardado nas Relíquias.";
+      rodape.textContent = "O medalhão foi guardado no Inventário.";
       window.dispatchEvent(new CustomEvent("oum:inventario"));
       import("./inventario.js").then(({ anunciarItem }) => {
         anunciarItem("medalhao");

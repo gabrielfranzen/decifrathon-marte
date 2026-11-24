@@ -1,5 +1,6 @@
 // Enigma E03 — Oito adagas (antecâmara C01C)
 // Cima = ligada; baixo = desligada. Sem palavra-resultado.
+// Meio-termo: sem D1 ← LIGADA, mas dedução em cadeia (sem prova por casos).
 
 export const TITULO_CARTA_ADAGAS = "Mapa das adagas";
 
@@ -7,7 +8,7 @@ export const ROTINA = Object.freeze([
   "D5 ← NÃO (D2 OU D4)",
   "D2 ← NÃO D1",
   "D7 ← D3 OU NÃO D6",
-  "D1 ← LIGADA",
+  "D1 ← NÃO D3",
   "D4 ← D1 OU D3",
   "D8 ← D6 E NÃO D7",
   "D6 ← D4 E NÃO D5",
@@ -15,6 +16,7 @@ export const ROTINA = Object.freeze([
 ]);
 
 // índice 0 = D1 … índice 7 = D8
+// Solução: D1, D4, D6, D8 ligadas; D2, D3, D5, D7 desligadas
 export const ESTADO_CERTO = Object.freeze([
   true,
   false,

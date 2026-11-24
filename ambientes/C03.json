@@ -1,9 +1,25 @@
 {
   "id": "C03",
   "nome": "Sala do Arquivo",
-  "descricao": "Sala lateral direita do castelo. Entrada atrás do jogador; parede frontal com arquivo de gavetas; balcões laterais com pergaminhos; sem portas visíveis. Clique aproxima (C03G, 40 gavetas). Volta ao C01.",
+  "descricao": "Sala lateral direita do castelo. Entrada atrás do jogador; parede frontal com arquivo de gavetas; balcões laterais com pergaminhos; sem portas visíveis. Clique aproxima (C03G, 40 gavetas). Volta ao C01. Balcões entregam relatos de Véspera; gavetas corretas 20 e 11 entregam fragmentos da guerra.",
   "imagem": "assets/C03/C03-sala-gavetas.jpg",
   "hotspots": [
+    {
+      "id": "balcao-esquerda",
+      "left": 1.16,
+      "top": 44.6,
+      "width": 19.99,
+      "height": 20.86,
+      "zIndex": 5
+    },
+    {
+      "id": "balcao-direita",
+      "left": 78.8,
+      "top": 46.94,
+      "width": 19.94,
+      "height": 18.7,
+      "zIndex": 5
+    },
     {
       "id": "arquivo",
       "left": 22.42,
@@ -31,6 +47,16 @@
   ],
   "interacoes": [
     {
+      "id": "balcao-esquerda",
+      "tipo": "coleta",
+      "descricao": "Recupera o relato do campo (testemunho de Véspera)."
+    },
+    {
+      "id": "balcao-direita",
+      "tipo": "coleta",
+      "descricao": "Recupera o relato da forja (testemunho de Véspera)."
+    },
+    {
       "id": "arquivo",
       "tipo": "passagem",
       "descricao": "Aproxima o arquivo de gavetas (C03G)."
@@ -53,5 +79,5 @@
       "retorno": true
     }
   ],
-  "observacoes": "POV frontal, sem portas; seleção jogável no C03G com 40 gavetas (8x5). Instruções no papel da C02."
+  "observacoes": "POV frontal, sem portas; seleção jogável no C03G com 40 gavetas (8x5). Instruções no papel da C02. Relatos nos balcões; fragmentos da guerra nas gavetas 20 e 11."
 }

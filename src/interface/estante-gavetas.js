@@ -1,13 +1,18 @@
 import { tocar } from "../core/audio.js";
 import {
+  coletarRelatoArquivo,
   definirGavetasAbertas,
   obterEstado,
+  temRelatoArquivo,
 } from "../core/estado.js";
+import { obterRelatoDaGaveta } from "../dados/relatos-arquivo.js";
 import {
   ETIQUETAS,
   NUMEROS,
   TOTAL_GAVETAS,
 } from "../enigmas/e02.js";
+import { abrirExaminador } from "./examinador.js";
+import { anunciarItem } from "./inventario.js";
 
 function criarGaveta(posicao) {
   const indice = posicao - 1;
@@ -110,6 +115,20 @@ export function montarEstanteGavetas(container) {
       tocar("papel");
       abertas.push(posicao);
       persistirAbertas();
+
+      const relato = obterRelatoDaGaveta(posicao);
+      if (!relato || temRelatoArquivo(relato.id)) {
+        return;
+      }
+      coletarRelatoArquivo(relato.id);
+      window.dispatchEvent(new CustomEvent("oum:inventario"));
+      anunciarItem(relato.id);
+      abrirExaminador({
+        tipo: "relato-arquivo",
+        idRelato: relato.id,
+        nasMaos: true,
+        nomeObjeto: relato.nome,
+      });
     });
     gavetas.push(gaveta);
     estante.append(gaveta);

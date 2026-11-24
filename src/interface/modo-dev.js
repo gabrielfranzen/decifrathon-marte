@@ -41,12 +41,18 @@ function garantirPainel() {
     <p class="modo-dev-painel__info" data-papel="info">—</p>
     <div class="modo-dev-painel__acoes">
       <button type="button" class="modo-dev-botao" data-acao="salvar">Salvar JSON</button>
+      <button type="button" class="modo-dev-botao" data-acao="pular-final">Pular para o final</button>
       <button type="button" class="modo-dev-botao modo-dev-botao--secundario" data-acao="fechar">Fechar</button>
     </div>
   `;
 
   painel.querySelector('[data-acao="salvar"]').addEventListener("click", () => {
     void salvar();
+  });
+  painel.querySelector('[data-acao="pular-final"]').addEventListener("click", () => {
+    definirModoDev(false);
+    window.dispatchEvent(new CustomEvent("oum:dev-pular-final"));
+    void aviso("Modo Dev", "Indo para a cena final…");
   });
   painel.querySelector('[data-acao="fechar"]').addEventListener("click", () => {
     definirModoDev(false);

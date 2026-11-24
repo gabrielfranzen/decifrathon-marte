@@ -41,6 +41,8 @@ export const imagensAmbientes = {
   // Sala do perseguidor + fundo da revelação final
   c01d: "assets/C01D/C01D-sala-perseguidor.jpg",
   c01dRevelacao: "assets/C01D/C01D-capacete-mesa.jpg",
+  // Fundo dos créditos: retorno a Véspera com o elmo
+  finalVilaCelebracao: "assets/final/final-image.png",
 };
 
 export function obterImagemG00A({ portaPrincipalAberta }) {
@@ -148,4 +150,8 @@ export function obterImagemC01D() {
 
 export function obterImagemRevelacaoC01D() {
   return imagensAmbientes.c01dRevelacao;
+}
+
+export function obterImagemFinalVilaCelebracao() {
+  return imagensAmbientes.finalVilaCelebracao;
 }

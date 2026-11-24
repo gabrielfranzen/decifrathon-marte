@@ -36,10 +36,7 @@ function criarBotaoAdaga(indice, ligadaInicial, bloqueada) {
   figura.draggable = false;
   figura.setAttribute("aria-hidden", "true");
 
-  const estadoTxt = document.createElement("span");
-  estadoTxt.className = "ad-adaga__estado";
-
-  botao.append(rotulo, figura, estadoTxt);
+  botao.append(rotulo, figura);
 
   botao.definir = (ligada) => {
     botao.classList.toggle("ligada", ligada);
@@ -49,7 +46,6 @@ function criarBotaoAdaga(indice, ligadaInicial, bloqueada) {
       `Adaga D${indice + 1}${ligada ? ", ligada (cima)" : ", desligada (baixo)"}`
     );
     figura.src = obterImagemAdaga(ligada);
-    estadoTxt.textContent = ligada ? "cima" : "baixo";
   };
 
   botao.definir(ligadaInicial);

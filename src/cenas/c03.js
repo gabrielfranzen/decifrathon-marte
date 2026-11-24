@@ -1,19 +1,48 @@
 import { iniciarAudio, tocar, tocarAmbiente } from "../core/audio.js";
 import {
+  coletarRelatoArquivo,
+  definirSalaAtual,
+  temRelatoArquivo,
+} from "../core/estado.js";
+import {
   carregarAmbiente,
   estiloDeHotspot,
 } from "../dados/ambientes.js";
+import { obterRelatoDoBalcao } from "../dados/relatos-arquivo.js";
 import { obterImagemC03 } from "../dados/imagens.js";
-import { definirSalaAtual } from "../core/estado.js";
 import {
   criarCenaFotografica,
   criarHotspot,
 } from "../interface/fotografia.js";
+import { abrirExaminador } from "../interface/examinador.js";
+import { anunciarItem } from "../interface/inventario.js";
 import {
   definirLugar,
   garantirHud,
   mostrarHud,
 } from "../interface/hud.js";
+
+function ativarBalcao(lado) {
+  const relato = obterRelatoDoBalcao(lado);
+  if (!relato) {
+    return;
+  }
+
+  const jaTinha = temRelatoArquivo(relato.id);
+  if (!jaTinha) {
+    coletarRelatoArquivo(relato.id);
+    window.dispatchEvent(new CustomEvent("oum:inventario"));
+    anunciarItem(relato.id);
+  }
+
+  tocar("papel");
+  abrirExaminador({
+    tipo: "relato-arquivo",
+    idRelato: relato.id,
+    nasMaos: true,
+    nomeObjeto: relato.nome,
+  });
+}
 
 export async function criarC03({ aoVoltar, aoAbrirArquivo } = {}) {
   definirSalaAtual("C03");
@@ -39,6 +68,30 @@ export async function criarC03({ aoVoltar, aoAbrirArquivo } = {}) {
   }
 
   camadaHotspots.append(
+    criarHotspot({
+      id: "balcao-esquerda",
+      rotulo: "Examinar pergaminhos do balcão esquerdo",
+      estilo: estilo("balcao-esquerda", {
+        left: 0.5,
+        top: 38,
+        width: 17.5,
+        height: 42,
+        zIndex: 5,
+      }),
+      aoAtivar: () => ativarBalcao("esquerda"),
+    }),
+    criarHotspot({
+      id: "balcao-direita",
+      rotulo: "Examinar pergaminhos do balcão direito",
+      estilo: estilo("balcao-direita", {
+        left: 82,
+        top: 38,
+        width: 17.5,
+        height: 42,
+        zIndex: 5,
+      }),
+      aoAtivar: () => ativarBalcao("direita"),
+    }),
     criarHotspot({
       id: "arquivo",
       rotulo: "Aproximar o arquivo de gavetas",

@@ -91,7 +91,7 @@ export function montarMesaCartas(camadaHotspots) {
   avisoGaveta.className = "mc-gaveta-aviso";
   avisoGaveta.hidden = !gavetaAberta;
   avisoGaveta.textContent =
-    "A gaveta cedeu. O papel da rotina está nas Relíquias.";
+    "A gaveta cedeu. O papel da rotina está no Inventário.";
 
   workspace.append(
     slotsEl,
@@ -481,7 +481,7 @@ export function montarMesaCartas(camadaHotspots) {
   function marcarGavetaAberta() {
     avisoGaveta.hidden = false;
     avisoGaveta.textContent =
-      "A gaveta cedeu. O papel da rotina está nas Relíquias.";
+      "A gaveta cedeu. O papel da rotina está no Inventário.";
     limparMensagensTemporarias();
   }
 

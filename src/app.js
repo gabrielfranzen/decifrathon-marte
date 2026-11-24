@@ -10,12 +10,19 @@ import {
   trocarFrameCutscene,
 } from "./cenas/c01b.js";
 import { criarC01C } from "./cenas/c01c.js";
-import { criarC01D } from "./cenas/c01d.js";
+import { aplicarRevelacaoC01D, criarC01D } from "./cenas/c01d.js";
+import { abrirDialogoFinal } from "./cenas/dialogo-final.js";
 import { criarC02 } from "./cenas/c02.js";
 import { criarC02M } from "./cenas/c02m.js";
 import { criarC03 } from "./cenas/c03.js";
 import { criarC03G } from "./cenas/c03g.js";
-import { iniciarAudio, pararArquivo, tocar, tocarArquivo } from "./core/audio.js";
+import {
+  iniciarAudio,
+  pararArquivo,
+  tocar,
+  tocarArquivo,
+  tocarTrilhaFinal,
+} from "./core/audio.js";
 import {
   carregarEstado,
   definirSalaAtual,
@@ -183,7 +190,8 @@ function irParaC01D() {
     () =>
       criarC01D({
         aoVoltar: irParaC01C,
-        aoVencerXadrez: dispararRevelacaoFinal,
+        aoVencerXadrez: prepararMesaPosXadrez,
+        aoColetarElmo: executarFinalAposColetarElmo,
       }),
     { comVeil: true }
   );
@@ -224,7 +232,7 @@ function montarMenuPrincipal() {
         irParaIntroducao();
       },
       aoContinuar: podeContinuarPartida(estado) ? retomarPartida : null,
-      aoVerFinal: estado.finalVisto ? dispararRevelacaoFinal : null,
+      aoVerFinal: estado.finalVisto ? () => void executarCenaFinalDesdeXadrez() : null,
       aoBatalhar: estado.finalVisto ? executarBatalhaDoMenu : null,
     })
   );
@@ -265,13 +273,40 @@ async function executarBatalhaDoMenu() {
   await montarMenuPrincipal();
 }
 
-function dispararRevelacaoFinal() {
-  void iniciarRevelacao({
+// Após o mate: só mostra o elmo na mesa e espera a coleta
+function prepararMesaPosXadrez() {
+  aplicarRevelacaoC01D();
+}
+
+// t=0 da Final-soundtrack = clique em Coletar elmo
+// Diálogo na mesa → preto → vila já escurecida → créditos
+async function executarFinalAposColetarElmo() {
+  tocarTrilhaFinal();
+  await abrirDialogoFinal();
+  await iniciarRevelacao({
+    iniciarTrilha: false,
     aoEncerrar: async () => {
       definirSalaAtual("tela-inicial");
       await montarMenuPrincipal();
     },
   });
+}
+
+// Replay: mate → mesa → coletar elmo → diálogo → créditos
+async function executarCenaFinalDesdeXadrez() {
+  iniciarAudio();
+  await mostrarCena(
+    () =>
+      criarC01D({
+        forcarPreVitoria: true,
+        abrirVitoriaAutomatica: true,
+        forcarColetaElmo: true,
+        aoVoltar: irParaC01C,
+        aoVencerXadrez: prepararMesaPosXadrez,
+        aoColetarElmo: executarFinalAposColetarElmo,
+      }),
+    { comVeil: true }
+  );
 }
 
 function irParaC01B() {
@@ -501,6 +536,9 @@ function iniciar() {
   garantirHud();
   mostrarHud(false);
   instalarAtalhosModoDev();
+  window.addEventListener("oum:dev-pular-final", () => {
+    void executarCenaFinalDesdeXadrez();
+  });
   carregarEstado();
   montarMenuPrincipal();
 }

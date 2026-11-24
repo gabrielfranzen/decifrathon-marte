@@ -1,6 +1,24 @@
 import { obterEstado } from "../core/estado.js";
 import { iniciarAudio, tocar } from "../core/audio.js";
+import { RELATOS_ARQUIVO } from "../dados/relatos-arquivo.js";
 import { abrirExaminador } from "./examinador.js";
+
+const IMAGEM_PAPEL = "assets/inventario/objeto-papel-arquivo.png";
+
+function itensDosRelatos() {
+  const mapa = {};
+  for (const relato of Object.values(RELATOS_ARQUIVO)) {
+    mapa[relato.id] = {
+      id: relato.id,
+      nome: relato.nome,
+      descricao: relato.descricao,
+      inicial: relato.nome.charAt(0),
+      imagem: IMAGEM_PAPEL,
+      tipoExame: "relato-arquivo",
+    };
+  }
+  return mapa;
+}
 
 export const ITENS = {
   medalhao: {
@@ -15,7 +33,7 @@ export const ITENS = {
     nome: "Rotina",
     descricao: "Rotina do arquivo: busca binária nas quarenta gavetas.",
     inicial: "P",
-    imagem: "assets/inventario/objeto-papel-arquivo.png",
+    imagem: IMAGEM_PAPEL,
   },
   espada: {
     id: "espada",
@@ -31,6 +49,13 @@ export const ITENS = {
     inicial: "A",
     imagem: "assets/inventario/objeto-carta-adagas.jpg",
   },
+  elmo: {
+    id: "elmo",
+    nome: "Elmo",
+    descricao: "O elmo daquele que atormentou a vila.",
+    inicial: "E",
+  },
+  ...itensDosRelatos(),
 };
 
 let painel = null;
@@ -55,7 +80,7 @@ function garantirPainel() {
 
   painel = document.createElement("aside");
   painel.className = "painel-reliquias";
-  painel.setAttribute("aria-label", "Relíquias");
+  painel.setAttribute("aria-label", "Inventário");
   painel.setAttribute("aria-hidden", "true");
   painel.inert = true;
 
@@ -64,9 +89,9 @@ function garantirPainel() {
 
   const titulo = document.createElement("p");
   titulo.className = "painel-titulo";
-  titulo.textContent = "Relíquias";
+  titulo.textContent = "Inventário";
 
-  const fechar = criarBotao("painel-fechar", "Fechar", "Fechar Relíquias");
+  const fechar = criarBotao("painel-fechar", "Fechar", "Fechar Inventário");
   fechar.addEventListener("click", fecharPainelReliquias);
 
   topo.append(titulo, fechar);
@@ -110,7 +135,7 @@ function renderizar() {
   if (estado.inventario.length === 0) {
     const vazio = document.createElement("p");
     vazio.className = "painel-vazio";
-    vazio.textContent = "Nenhuma relíquia recuperada.";
+    vazio.textContent = "Nenhum item recuperado.";
     alvo.append(vazio);
     return;
   }
@@ -161,6 +186,21 @@ function renderizar() {
           nasMaos: true,
           nomeObjeto: item.nome,
         });
+        return;
+      }
+      if (id === "elmo") {
+        import("./hud.js").then(({ toast }) => {
+          toast(item.nome, item.descricao);
+        });
+        return;
+      }
+      if (item.tipoExame === "relato-arquivo") {
+        abrirExaminador({
+          tipo: "relato-arquivo",
+          idRelato: id,
+          nasMaos: true,
+          nomeObjeto: item.nome,
+        });
       }
     });
     grade.append(botao);
@@ -196,11 +236,11 @@ export function painelReliquiasAberto() {
 }
 
 export function criarBotaoInventario() {
-  const botao = criarBotao("hud-botao", "Relíquias", "Abrir Relíquias");
+  const botao = criarBotao("hud-botao", "Inventário", "Abrir Inventário");
   botao.addEventListener("click", () => abrirPainelReliquias());
   function atualizar() {
     const n = obterEstado().inventario.length;
-    botao.textContent = n > 0 ? `Relíquias (${n})` : "Relíquias";
+    botao.textContent = n > 0 ? `Inventário (${n})` : "Inventário";
   }
   atualizar();
   window.addEventListener("oum:inventario", atualizar);
@@ -222,6 +262,6 @@ export async function anunciarItem(id, { tocarSom = true } = {}) {
   const { limparMensagensTemporarias } = await import("./fotografia.js");
   limparMensagensTemporarias();
   const { toast, pulsarReliquias } = await import("./hud.js");
-  toast("Relíquia recuperada", item.nome);
+  toast("Item recuperado", item.nome);
   pulsarReliquias();
 }

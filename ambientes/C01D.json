@@ -13,6 +13,14 @@
       "zIndex": 3
     },
     {
+      "id": "elmo",
+      "left": 42,
+      "top": 40,
+      "width": 16,
+      "height": 34.45,
+      "zIndex": 7
+    },
+    {
       "id": "tabuleiro",
       "left": 36.15,
       "top": 64.26,
@@ -34,6 +42,11 @@
       "id": "perseguidor",
       "tipo": "examinar",
       "descricao": "O perseguidor espera em silêncio."
+    },
+    {
+      "id": "elmo",
+      "tipo": "coleta",
+      "descricao": "Após o mate: Coletar elmo dispara o final."
     },
     {
       "id": "tabuleiro",

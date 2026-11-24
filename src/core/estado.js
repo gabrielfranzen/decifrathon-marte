@@ -22,6 +22,7 @@ export const ESTADO_INICIAL = Object.freeze({
   buscaGavetasOk: false,
   rodasE02: ["A", "A", "A", "A", "A"],
   gavetasAbertas: [],
+  relatosArquivoColetados: [],
   espadaColetada: false,
   viuPerseguidorC01: false,
   lutaCorredorConcluida: false,
@@ -30,6 +31,7 @@ export const ESTADO_INICIAL = Object.freeze({
   alavancasE03: [false, false, false, false, false, false, false, false],
   cartaAdagasColetada: false,
   e04Resolvido: false,
+  elmoColetado: false,
   finalVisto: false,
 });
 
@@ -68,6 +70,23 @@ function normalizarGavetasAbertas(abertas) {
   return normalizadas;
 }
 
+function normalizarRelatosArquivo(ids) {
+  if (!Array.isArray(ids)) {
+    return [...ESTADO_INICIAL.relatosArquivoColetados];
+  }
+  const vistas = new Set();
+  const normalizados = [];
+  for (const valor of ids) {
+    const id = String(valor || "");
+    if (!id || vistas.has(id)) {
+      continue;
+    }
+    vistas.add(id);
+    normalizados.push(id);
+  }
+  return normalizados;
+}
+
 function normalizarAlavancasE03(estados) {
   if (!Array.isArray(estados) || estados.length !== 8) {
     return [...ESTADO_INICIAL.alavancasE03];
@@ -87,6 +106,9 @@ function estruturarEstado(parcial) {
       : [...ESTADO_INICIAL.inventario],
     casasCartas: normalizarCasasCartas(parcial.casasCartas),
     gavetasAbertas: normalizarGavetasAbertas(parcial.gavetasAbertas),
+    relatosArquivoColetados: normalizarRelatosArquivo(
+      parcial.relatosArquivoColetados
+    ),
     alavancasE03: normalizarAlavancasE03(parcial.alavancasE03),
   };
 
@@ -106,6 +128,7 @@ function estruturarEstado(parcial) {
   base.portaPedraAberta = Boolean(base.portaPedraAberta);
   base.cartaAdagasColetada = Boolean(base.cartaAdagasColetada);
   base.e04Resolvido = Boolean(base.e04Resolvido);
+  base.elmoColetado = Boolean(base.elmoColetado);
   base.finalVisto = Boolean(base.finalVisto);
   base.anelExterno = normalizarIndice(base.anelExterno);
   base.anelInterno = normalizarIndice(base.anelInterno);
@@ -144,6 +167,16 @@ function estruturarEstado(parcial) {
 
   if (base.cartaAdagasColetada && !base.inventario.includes("carta-adagas")) {
     base.inventario.push("carta-adagas");
+  }
+
+  if (base.elmoColetado && !base.inventario.includes("elmo")) {
+    base.inventario.push("elmo");
+  }
+
+  for (const idRelato of base.relatosArquivoColetados) {
+    if (!base.inventario.includes(idRelato)) {
+      base.inventario.push(idRelato);
+    }
   }
 
   return base;
@@ -196,6 +229,7 @@ export function obterEstado() {
     inventario: [...estado.inventario],
     casasCartas: [...estado.casasCartas],
     gavetasAbertas: [...estado.gavetasAbertas],
+    relatosArquivoColetados: [...estado.relatosArquivoColetados],
   };
 }
 
@@ -316,6 +350,26 @@ export function definirGavetasAbertas(abertas) {
   notificar();
 }
 
+export function coletarRelatoArquivo(idRelato) {
+  const id = String(idRelato || "");
+  if (!id) {
+    return false;
+  }
+  if (!estado.relatosArquivoColetados.includes(id)) {
+    estado.relatosArquivoColetados.push(id);
+  }
+  if (!estado.inventario.includes(id)) {
+    estado.inventario.push(id);
+  }
+  persistir();
+  notificar();
+  return true;
+}
+
+export function temRelatoArquivo(idRelato) {
+  return estado.relatosArquivoColetados.includes(String(idRelato || ""));
+}
+
 export function concluirE02() {
   estado.e02Resolvido = true;
   estado.buscaGavetasOk = true;
@@ -380,6 +434,16 @@ export function concluirE04() {
   estado.e04Resolvido = true;
   persistir();
   notificar();
+}
+
+export function coletarElmo() {
+  estado.elmoColetado = true;
+  if (!estado.inventario.includes("elmo")) {
+    estado.inventario.push("elmo");
+  }
+  persistir();
+  notificar();
+  return true;
 }
 
 export function marcarFinalVisto() {
