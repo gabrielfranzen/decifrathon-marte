@@ -388,34 +388,6 @@ export function marcarFinalVisto() {
   notificar();
 }
 
-// Modo Dev: antecâmara com E03 limpo (porta fechada, carta de volta, adagas em baixo)
-export function reiniciarAntecâmaraC01C() {
-  estado.e03Resolvido = false;
-  estado.portaPedraAberta = false;
-  estado.cartaAdagasColetada = false;
-  estado.alavancasE03 = normalizarAlavancasE03([
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
-  estado.inventario = estado.inventario.filter((id) => id !== "carta-adagas");
-  // Garante o caminho até a C01C
-  estado.lutaCorredorConcluida = true;
-  estado.espadaColetada = true;
-  if (!estado.inventario.includes("espada")) {
-    estado.inventario.push("espada");
-  }
-  estado.salaAtual = "C01C";
-  persistir();
-  notificar();
-  return obterEstado();
-}
-
 export function temItem(idItem) {
   return estado.inventario.includes(idItem);
 }

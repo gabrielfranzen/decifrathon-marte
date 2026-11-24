@@ -21,7 +21,6 @@ import {
   definirSalaAtual,
   obterEstado,
   registrarLutaCorredorConcluida,
-  reiniciarAntecâmaraC01C,
   reiniciarEstado,
   temItem,
 } from "./core/estado.js";
@@ -226,8 +225,44 @@ function montarMenuPrincipal() {
       },
       aoContinuar: podeContinuarPartida(estado) ? retomarPartida : null,
       aoVerFinal: estado.finalVisto ? dispararRevelacaoFinal : null,
+      aoBatalhar: estado.finalVisto ? executarBatalhaDoMenu : null,
     })
   );
+}
+
+// Replay da luta do cavaleiro — não altera progresso; sempre volta ao menu
+async function executarBatalhaDoMenu() {
+  iniciarAudio();
+  const [, frame02, frameFuga] = obterFramesLutaC01B();
+
+  await mostrarCena(() => criarCenaLutaEspada(), { comVeil: true });
+
+  tocarArquivo("bladesClash");
+  await aguardar(DURACAO_LUTA_DESEMBAINHAR_MS);
+
+  if (cenaAtual) {
+    trocarFrameCutscene(
+      cenaAtual,
+      frame02,
+      "Choque de espadas com o perseguidor"
+    );
+  }
+  await aguardar(DURACAO_LUTA_COMBATE_MS);
+  pararArquivo();
+
+  const resultado = await abrirMinigameAparadas();
+
+  if (resultado === "vitoria" && cenaAtual) {
+    trocarFrameCutscene(
+      cenaAtual,
+      frameFuga,
+      "O perseguidor foge pelo fundo do corredor"
+    );
+    await tocarArquivo("knightRunning");
+  }
+
+  definirSalaAtual("tela-inicial");
+  await montarMenuPrincipal();
 }
 
 function dispararRevelacaoFinal() {
@@ -466,15 +501,6 @@ function iniciar() {
   garantirHud();
   mostrarHud(false);
   instalarAtalhosModoDev();
-  // Modo Dev: botão "Tocar luta" dispara a cutscene completa
-  window.addEventListener("oum:dev-luta", () => {
-    void executarLutaComEspada();
-  });
-  window.addEventListener("oum:dev-antecamara", () => {
-    reiniciarAntecâmaraC01C();
-    window.dispatchEvent(new CustomEvent("oum:inventario"));
-    irParaC01C();
-  });
   carregarEstado();
   montarMenuPrincipal();
 }

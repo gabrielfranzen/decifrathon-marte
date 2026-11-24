@@ -44,19 +44,18 @@ export const POEMA_FINAL = [
   "Chegou ao lugar da ordem pendente.",
   "",
   "E pela primeira vez em séculos,",
-  "a ordem foi dada.",
+  "alguém pronunciou o que faltava.",
+  "O último movimento.",
   "A guarnição foi dispensada.",
   "A guerra, enfim, terminou.",
   "",
   "Véspera acordou livre da maldição.",
   "As casas voltaram a ter luz.",
   "Os desaparecidos puderam ser nomeados.",
-  "Tudo ficou bem, ou quase.",
   "",
-  "Porque alguém teve de ocupar o lugar",
-  "daquele que nunca pronunciou o último movimento.",
-  "",
-  "Você não veio só para investigar.",
+  "Você não ficou para guardar o castelo.",
+  "Você o libertou.",
+  "E por ter tido a coragem de encerrar a guerra,",
   "Você se tornou um ...",
 ];
 
@@ -128,7 +127,7 @@ export async function iniciarRevelacao({ aoEncerrar } = {}) {
     const rodape = criarElemento(
       "p",
       "sua-chave",
-      "Essa é a chave da sua equipe"
+      "Essa é sua chave"
     );
     const menu = document.createElement("button");
     menu.type = "button";
@@ -162,37 +161,52 @@ export async function iniciarRevelacao({ aoEncerrar } = {}) {
   janela.append(rolo);
 
   const controles = criarElemento("div", "creditos-controles");
-  const velocidade = document.createElement("button");
-  velocidade.type = "button";
-  velocidade.className = "creditos-botao";
-  velocidade.textContent = "2×";
-  velocidade.setAttribute("aria-pressed", "false");
-  velocidade.setAttribute("aria-label", "Ver créditos em velocidade 2x");
+
+  const grupoVelocidade = criarElemento("div", "creditos-velocidade");
+  const rotuloVelocidade = criarElemento("label", "creditos-velocidade-rotulo", "Velocidade");
+  rotuloVelocidade.setAttribute("for", "creditos-velocidade");
+  const valorVelocidade = criarElemento("span", "creditos-velocidade-valor", "1×");
+  valorVelocidade.setAttribute("aria-hidden", "true");
+
+  const sliderVelocidade = document.createElement("input");
+  sliderVelocidade.type = "range";
+  sliderVelocidade.id = "creditos-velocidade";
+  sliderVelocidade.className = "creditos-velocidade-slider";
+  sliderVelocidade.min = "1";
+  sliderVelocidade.max = "5";
+  sliderVelocidade.step = "0.1";
+  sliderVelocidade.value = "1";
+  sliderVelocidade.setAttribute("aria-label", "Velocidade dos créditos");
+  sliderVelocidade.setAttribute("aria-valuemin", "1");
+  sliderVelocidade.setAttribute("aria-valuemax", "5");
+  sliderVelocidade.setAttribute("aria-valuenow", "1");
+  sliderVelocidade.setAttribute("aria-valuetext", "1 vezes");
+
+  grupoVelocidade.append(rotuloVelocidade, sliderVelocidade, valorVelocidade);
 
   const pular = document.createElement("button");
   pular.type = "button";
   pular.className = "creditos-botao";
   pular.textContent = "Pular";
 
-  controles.append(velocidade, pular);
+  controles.append(grupoVelocidade, pular);
 
-  let em2x = false;
   let terminou = false;
 
-  function progressoAtual() {
-    const anim = (rolo.getAnimations?.() || [])[0];
-    if (!anim?.effect) {
-      return 0;
-    }
-    const timing = anim.effect.getComputedTiming();
-    if (typeof timing.progress === "number") {
-      return Math.min(0.999, Math.max(0, timing.progress));
-    }
-    const duracao = timing.duration;
-    if (typeof duracao === "number" && duracao > 0) {
-      return Math.min(0.999, Math.max(0, (anim.currentTime || 0) / duracao));
-    }
-    return 0;
+  function formatarTaxa(taxa) {
+    const arredondada = Math.round(taxa * 10) / 10;
+    return Number.isInteger(arredondada)
+      ? `${arredondada}×`
+      : `${arredondada.toFixed(1)}×`;
+  }
+
+  function animacaoCreditos() {
+    const animacoes = rolo.getAnimations?.() || [];
+    return (
+      animacoes.find((anim) => anim.animationName === "xz-subir-creditos") ||
+      animacoes[0] ||
+      null
+    );
   }
 
   function aoFimAnimacao(evento) {
@@ -202,28 +216,28 @@ export async function iniciarRevelacao({ aoEncerrar } = {}) {
     seguir();
   }
 
+  // Só altera a taxa de reprodução — não reinicia o rolo
   function aplicarVelocidade(taxa) {
-    const progresso = progressoAtual();
-    const novaDuracao = duracaoBase / taxa;
-    rolo.style.animation = "none";
-    void rolo.offsetWidth;
-    rolo.style.setProperty("--duracao", `${novaDuracao}s`);
-    rolo.style.animation = `xz-subir-creditos ${novaDuracao}s linear forwards`;
-    rolo.style.animationDelay = `-${progresso * novaDuracao}s`;
+    const anim = animacaoCreditos();
+    if (anim) {
+      anim.playbackRate = taxa;
+    }
   }
 
-  velocidade.addEventListener("click", () => {
-    em2x = !em2x;
-    const taxa = em2x ? 2 : 1;
-    velocidade.textContent = em2x ? "1×" : "2×";
-    velocidade.setAttribute("aria-pressed", em2x ? "true" : "false");
-    velocidade.setAttribute(
-      "aria-label",
-      em2x ? "Voltar à velocidade normal" : "Ver créditos em velocidade 2x"
+  function atualizarVelocidade() {
+    const taxa = Math.min(5, Math.max(1, Number(sliderVelocidade.value) || 1));
+    const texto = formatarTaxa(taxa);
+    valorVelocidade.textContent = texto;
+    sliderVelocidade.setAttribute("aria-valuenow", String(taxa));
+    sliderVelocidade.setAttribute("aria-valuetext", `${texto.replace("×", "")} vezes`);
+    grupoVelocidade.style.setProperty(
+      "--progresso",
+      `${((taxa - 1) / 4) * 100}%`
     );
-    velocidade.classList.toggle("creditos-botao--ativa", em2x);
     aplicarVelocidade(taxa);
-  });
+  }
+
+  sliderVelocidade.addEventListener("input", atualizarVelocidade);
 
   const seguir = () => {
     if (terminou) {

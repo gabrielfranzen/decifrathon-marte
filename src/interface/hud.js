@@ -37,29 +37,16 @@ export function garantirHud() {
   acoes.className = "hud-acoes";
 
   ui.botaoReliquias = criarBotao("hud-botao", "Relíquias", "Abrir Relíquias");
-  ui.botaoAreas = criarBotao("hud-botao hud-icone", "◎", "Mostrar áreas clicáveis");
-  ui.botaoDev = criarBotao("hud-botao", "Dev", "Alternar modo desenvolvedor de hotspots");
   ui.botaoSom = criarBotao(
     "hud-botao hud-icone",
     estaMudo() ? "🔇" : "🔊",
     "Ligar ou desligar o som"
   );
-  ui.botaoAreas.setAttribute("aria-pressed", "false");
-  ui.botaoDev.setAttribute("aria-pressed", "false");
 
   ui.botaoReliquias.addEventListener("click", async () => {
     iniciarAudio();
     const { abrirPainelReliquias } = await import("./inventario.js");
     abrirPainelReliquias();
-  });
-
-  ui.botaoAreas.addEventListener("click", alternarAreas);
-
-  ui.botaoDev.addEventListener("click", async () => {
-    iniciarAudio();
-    const { alternarModoDev, modoDevAtivo } = await import("./modo-dev.js");
-    alternarModoDev();
-    ui.botaoDev.setAttribute("aria-pressed", modoDevAtivo() ? "true" : "false");
   });
 
   ui.botaoSom.addEventListener("click", () => {
@@ -68,15 +55,7 @@ export function garantirHud() {
     ui.botaoSom.textContent = agoraMudo ? "🔇" : "🔊";
   });
 
-  acoes.append(ui.botaoReliquias, ui.botaoAreas, ui.botaoDev, ui.botaoSom);
-
-  window.addEventListener("oum:modo-dev", async (evento) => {
-    if (!ui?.botaoDev) {
-      return;
-    }
-    const ativo = Boolean(evento.detail?.ativo);
-    ui.botaoDev.setAttribute("aria-pressed", ativo ? "true" : "false");
-  });
+  acoes.append(ui.botaoReliquias, ui.botaoSom);
   ui.hud.append(ui.nomeLugar, acoes);
 
   ui.legenda = document.createElement("p");
@@ -97,12 +76,6 @@ export function garantirHud() {
     if (evento.key === "Escape") {
       const { fecharPainelReliquias } = await import("./inventario.js");
       fecharPainelReliquias();
-    }
-    if (
-      (evento.key === "h" || evento.key === "H") &&
-      !evento.target.closest("input, textarea, [contenteditable]")
-    ) {
-      alternarAreas();
     }
   });
 
@@ -186,12 +159,6 @@ function atualizarContagemReliquias() {
   }
   const n = obterEstado().inventario.length;
   ui.botaoReliquias.textContent = n > 0 ? `Relíquias (${n})` : "Relíquias";
-}
-
-function alternarAreas() {
-  garantirHud();
-  const ativo = document.body.classList.toggle("mostrar-areas");
-  ui.botaoAreas.setAttribute("aria-pressed", ativo ? "true" : "false");
 }
 
 export function aguardar(ms) {

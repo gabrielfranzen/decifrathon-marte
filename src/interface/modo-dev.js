@@ -41,29 +41,15 @@ function garantirPainel() {
     <p class="modo-dev-painel__info" data-papel="info">—</p>
     <div class="modo-dev-painel__acoes">
       <button type="button" class="modo-dev-botao" data-acao="salvar">Salvar JSON</button>
-      <button type="button" class="modo-dev-botao modo-dev-botao--secundario" data-acao="recarregar">Recarregar</button>
       <button type="button" class="modo-dev-botao modo-dev-botao--secundario" data-acao="fechar">Fechar</button>
-    </div>
-    <div class="modo-dev-painel__acoes">
-      <button type="button" class="modo-dev-botao" data-acao="tocar-luta">Tocar luta</button>
-      <button type="button" class="modo-dev-botao" data-acao="antecamara">Antecâmara reset</button>
     </div>
   `;
 
   painel.querySelector('[data-acao="salvar"]').addEventListener("click", () => {
     void salvar();
   });
-  painel.querySelector('[data-acao="recarregar"]').addEventListener("click", () => {
-    void montarSobreCamada(true);
-  });
   painel.querySelector('[data-acao="fechar"]').addEventListener("click", () => {
     definirModoDev(false);
-  });
-  painel.querySelector('[data-acao="tocar-luta"]').addEventListener("click", () => {
-    window.dispatchEvent(new CustomEvent("oum:dev-luta"));
-  });
-  painel.querySelector('[data-acao="antecamara"]').addEventListener("click", () => {
-    window.dispatchEvent(new CustomEvent("oum:dev-antecamara"));
   });
 
   document.getElementById("app").append(painel);
@@ -310,7 +296,6 @@ export function definirModoDev(ligar) {
   painel.hidden = !ativo;
 
   if (ativo) {
-    document.body.classList.add("mostrar-areas");
     void montarSobreCamada(true);
   } else {
     if (camada) {
@@ -340,10 +325,8 @@ export function instalarAtalhosModoDev() {
     if (evento.target.closest("input, textarea, [contenteditable]")) {
       return;
     }
-    if (evento.key === "d" || evento.key === "D") {
-      if (evento.ctrlKey || evento.metaKey || evento.altKey) {
-        return;
-      }
+    // Ctrl+D (ou Cmd+D no Mac) alterna o modo dev
+    if ((evento.key === "d" || evento.key === "D") && (evento.ctrlKey || evento.metaKey)) {
       evento.preventDefault();
       alternarModoDev();
     }

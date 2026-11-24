@@ -2732,15 +2732,6 @@ button:focus-visible {
   text-align: center;
 }
 
-.cadeado-digitacao__rotulo {
-  display: block;
-  margin: 0 0 0.65rem;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #a89f92;
-}
-
 .cadeado-digitacao__slots {
   display: flex;
   justify-content: center;
@@ -2926,21 +2917,6 @@ button:focus-visible {
   }
 }
 
-.ferrolho-interno {
-  position: absolute;
-  left: 12%;
-  bottom: 18px;
-  width: 34%;
-  height: 8px;
-  border-radius: 3px;
-  background: linear-gradient(#8d8478, #2e2a26);
-  transition: transform 220ms ease;
-}
-
-.cadeado-corpo.aberto .ferrolho-interno {
-  transform: translateX(-18px);
-}
-
 .lingueta {
   position: absolute;
   right: 12px;
@@ -2978,15 +2954,6 @@ button:focus-visible {
 .lingueta-haste.recua {
   transition-duration: 90ms;
   transform: rotate(0deg);
-}
-
-.lingueta-nome {
-  display: block;
-  margin-top: 0.2rem;
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #d9d0c4;
 }
 
 @media (max-width: 480px) {
@@ -4144,8 +4111,90 @@ button:focus-visible {
   bottom: 1.5rem;
   z-index: 2;
   display: flex;
-  gap: 0.85rem;
+  gap: 1rem;
   align-items: center;
+}
+
+.creditos-velocidade {
+  --progresso: 0%;
+  display: grid;
+  grid-template-columns: auto minmax(7.5rem, 11rem) 2.6rem;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 44px;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid rgba(247, 241, 228, 0.55);
+  border-radius: 2px;
+  background: rgba(247, 241, 228, 0.12);
+}
+
+.creditos-velocidade-rotulo,
+.creditos-velocidade-valor {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f7f1e4;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  white-space: nowrap;
+}
+
+.creditos-velocidade-valor {
+  justify-self: end;
+  color: #ffe2a8;
+  min-width: 2.4rem;
+  text-align: right;
+}
+
+.creditos-velocidade-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 0.28rem;
+  margin: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(224, 162, 74, 0.95) 0%,
+    rgba(224, 162, 74, 0.95) var(--progresso),
+    rgba(247, 241, 228, 0.28) var(--progresso),
+    rgba(247, 241, 228, 0.28) 100%
+  );
+  cursor: pointer;
+  outline: none;
+}
+
+.creditos-velocidade-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 226, 168, 0.95);
+  background: #e0a24a;
+  box-shadow: 0 0 10px rgba(224, 162, 74, 0.45);
+  cursor: grab;
+}
+
+.creditos-velocidade-slider::-moz-range-thumb {
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 226, 168, 0.95);
+  background: #e0a24a;
+  box-shadow: 0 0 10px rgba(224, 162, 74, 0.45);
+  cursor: grab;
+}
+
+.creditos-velocidade-slider::-moz-range-track {
+  height: 0.28rem;
+  border: none;
+  background: transparent;
+}
+
+.creditos-velocidade-slider:focus-visible {
+  outline: 1px solid rgba(247, 241, 228, 0.9);
+  outline-offset: 4px;
 }
 
 .creditos-botao {
@@ -4173,15 +4222,12 @@ button:focus-visible {
   outline: none;
 }
 
-.creditos-botao--ativa {
-  color: #ffe2a8;
-  border-color: var(--brasa);
-  background: rgba(224, 162, 74, 0.22);
-}
-
 .chave-final {
+  position: absolute;
+  inset: 0;
   display: grid;
   justify-items: center;
+  align-content: center;
   gap: 0.75rem;
   padding: 1.5rem;
   text-align: center;
@@ -4243,9 +4289,9 @@ button:focus-visible {
 }
 
 .sua-chave {
-  margin: 0.4rem 0 2rem;
-  font-size: clamp(0.78rem, 1.4vw, 0.95rem);
-  letter-spacing: 0.28em;
+  margin: 0.4rem 0 0;
+  font-size: clamp(1.15rem, 2.8vw, 1.65rem);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--latao);
   opacity: 0;
@@ -4262,8 +4308,17 @@ button:focus-visible {
 }
 
 .chave-final .botao-texto {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.5rem, 5vh, 3rem);
+  transform: translateX(-50%);
   opacity: 0;
-  animation: xz-aparecer-rodape 1.2s ease 3.2s forwards;
+  animation: xz-aparecer-menu 1.2s ease 3.2s forwards;
+}
+
+@keyframes xz-aparecer-menu {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to { opacity: 1; transform: translateX(-50%); }
 }
 
 @media (prefers-reduced-motion: reduce) {

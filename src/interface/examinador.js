@@ -789,10 +789,6 @@ function criarDigitacaoCadeado({
   raiz.setAttribute("role", "group");
   raiz.setAttribute("aria-label", "Digite a combinação do cadeado");
 
-  const rotulo = document.createElement("p");
-  rotulo.className = "cadeado-digitacao__rotulo";
-  rotulo.textContent = "Ou digite a combinação";
-
   const slots = document.createElement("div");
   slots.className = "cadeado-digitacao__slots";
   const celulas = [];
@@ -951,7 +947,7 @@ function criarDigitacaoCadeado({
     document.addEventListener("paste", aoColarDocumento);
   }
 
-  raiz.append(rotulo, slots);
+  raiz.append(slots);
   pintarSlots();
 
   return {
@@ -1117,16 +1113,9 @@ function montarCadeado(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   lingueta.setAttribute("aria-label", "Acionar lingueta");
   const haste = document.createElement("span");
   haste.className = "lingueta-haste";
-  const nomeLingueta = document.createElement("span");
-  nomeLingueta.className = "lingueta-nome";
-  nomeLingueta.textContent = "Lingueta";
-  lingueta.append(haste, nomeLingueta);
+  lingueta.append(haste);
 
-  const ferrolho = document.createElement("span");
-  ferrolho.className = "ferrolho-interno";
-  ferrolho.setAttribute("aria-hidden", "true");
-
-  caixa.append(rebites, janela, ferrolho, lingueta);
+  caixa.append(rebites, janela, lingueta);
   cadeado.append(argola, caixa);
 
   digitacao = criarDigitacaoCadeado({
@@ -1355,16 +1344,9 @@ function montarCadeadoArmario(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   lingueta.setAttribute("aria-label", "Acionar lingueta");
   const haste = document.createElement("span");
   haste.className = "lingueta-haste";
-  const nomeLingueta = document.createElement("span");
-  nomeLingueta.className = "lingueta-nome";
-  nomeLingueta.textContent = "Lingueta";
-  lingueta.append(haste, nomeLingueta);
+  lingueta.append(haste);
 
-  const ferrolho = document.createElement("span");
-  ferrolho.className = "ferrolho-interno";
-  ferrolho.setAttribute("aria-hidden", "true");
-
-  caixa.append(rebites, janela, ferrolho, lingueta);
+  caixa.append(rebites, janela, lingueta);
   cadeado.append(argola, caixa);
 
   digitacao = criarDigitacaoCadeado({
@@ -1593,16 +1575,9 @@ function montarCadeadoCartas(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   lingueta.setAttribute("aria-label", "Acionar lingueta");
   const haste = document.createElement("span");
   haste.className = "lingueta-haste";
-  const nomeLingueta = document.createElement("span");
-  nomeLingueta.className = "lingueta-nome";
-  nomeLingueta.textContent = "Lingueta";
-  lingueta.append(haste, nomeLingueta);
+  lingueta.append(haste);
 
-  const ferrolho = document.createElement("span");
-  ferrolho.className = "ferrolho-interno";
-  ferrolho.setAttribute("aria-hidden", "true");
-
-  caixa.append(rebites, janela, ferrolho, lingueta);
+  caixa.append(rebites, janela, lingueta);
   cadeado.append(argola, caixa);
 
   digitacao = criarDigitacaoCadeado({

@@ -5,7 +5,12 @@ import {
   tocarTrilhaBatalha,
 } from "../core/audio.js";
 
-const DURACAO_BATALHA_MS = 35000;
+// Fallback se a trilha não reportar duração; o valor real vem de tocarTrilhaBatalha()
+const DURACAO_BATALHA_FALLBACK_MS = 40370;
+// Folga pro último anel sumir antes do fim da música (janela máx. ~1,3s + margem)
+const FOLGA_ULTIMO_ANEL_MS = 1600;
+// Respiro com tela limpa depois da trilha, antes do corte pra fuga
+const RESPIRACAO_POS_TRILHA_MS = 320;
 const VIDAS_INICIAIS = 3;
 const MARGEM_PCT = 10;
 const DISTANCIA_MIN_PCT = 18;
@@ -36,7 +41,7 @@ function intervaloAcertoMs(janelaMs) {
   return { inicio, fim };
 }
 
-// Progresso 0..1 ao longo dos 35s → dificuldade (ainda jogável)
+// Progresso 0..1 ao longo da trilha → dificuldade (ainda jogável)
 function obterDificuldade(progresso) {
   const p = Math.min(1, Math.max(0, progresso));
   // Janela do anel: 1,25s → 0,78s
@@ -250,7 +255,7 @@ function atualizarHudVidas(hud, vidas) {
 }
 
 /**
- * Overlay de instruções → batalha 35s com ramp.
+ * Overlay de instruções → batalha sincronizada com a trilha (uma passagem).
  * @returns {Promise<"vitoria" | "derrota">}
  */
 export function abrirMinigameAparadas() {
@@ -281,7 +286,10 @@ export function abrirMinigameAparadas() {
     let alvos = [];
     let timerBatalha = null;
     let timerSpawn = null;
+    let timerRespiro = null;
     let inicioBatalha = 0;
+    let duracaoBatalhaMs = DURACAO_BATALHA_FALLBACK_MS;
+    let fimSpawnMs = DURACAO_BATALHA_FALLBACK_MS - FOLGA_ULTIMO_ANEL_MS;
     let animFrame = 0;
     let ultimoSpawnEm = 0;
     let ultimaPosicaoSpawn = null;
@@ -305,6 +313,9 @@ export function abrirMinigameAparadas() {
       }
       if (timerSpawn) {
         window.clearTimeout(timerSpawn);
+      }
+      if (timerRespiro) {
+        window.clearTimeout(timerRespiro);
       }
       limparAlvos();
       pararTrilhaBatalha();
@@ -348,7 +359,12 @@ export function abrirMinigameAparadas() {
         return;
       }
       const agora = performance.now();
-      const progresso = (agora - inicioBatalha) / DURACAO_BATALHA_MS;
+      const decorrido = agora - inicioBatalha;
+      // Não nasce anel que não dá tempo de resolver antes do fim da música
+      if (decorrido >= fimSpawnMs) {
+        return;
+      }
+      const progresso = decorrido / duracaoBatalhaMs;
       const dificuldade = obterDificuldade(progresso);
       if (alvos.length >= dificuldade.maxSimultaneos) {
         return;
@@ -454,11 +470,19 @@ export function abrirMinigameAparadas() {
       if (finalizado) {
         return;
       }
-      const progresso = (performance.now() - inicioBatalha) / DURACAO_BATALHA_MS;
+      const agora = performance.now();
+      const restanteSpawn = fimSpawnMs - (agora - inicioBatalha);
+      if (restanteSpawn <= 0) {
+        return;
+      }
+      const progresso = (agora - inicioBatalha) / duracaoBatalhaMs;
       const { intervaloSpawnMs } = obterDificuldade(progresso);
       // Mais tempo folgado que cluster: espalha melhor pela tela
       const fator = aleatorioEntre(0.7, 1.45);
-      const espera = Math.max(320, intervaloSpawnMs * fator);
+      const espera = Math.min(
+        Math.max(320, intervaloSpawnMs * fator),
+        restanteSpawn
+      );
       timerSpawn = window.setTimeout(() => {
         spawnAlvo();
         agendarProximoSpawn();
@@ -498,16 +522,43 @@ export function abrirMinigameAparadas() {
 
       hudVidas = montarHudVidas(overlay, vidas);
       inicioBatalha = performance.now();
-      tocarTrilhaBatalha();
-
-      // Um alvo só no início; os próximos entram com delay
-      spawnAlvo();
-      agendarProximoSpawn();
       animFrame = window.requestAnimationFrame(tickAlvos);
 
-      timerBatalha = window.setTimeout(() => {
-        encerrar("vitoria");
-      }, DURACAO_BATALHA_MS);
+      void tocarTrilhaBatalha().then((duracaoMs) => {
+        if (finalizado) {
+          return;
+        }
+        duracaoBatalhaMs = Math.max(
+          8000,
+          Number(duracaoMs) || DURACAO_BATALHA_FALLBACK_MS
+        );
+        fimSpawnMs = Math.max(4000, duracaoBatalhaMs - FOLGA_ULTIMO_ANEL_MS);
+
+        // Um alvo só no início; os próximos entram com delay
+        spawnAlvo();
+        agendarProximoSpawn();
+
+        // Conta a partir do start da trilha (não do loadedmetadata)
+        const restanteTrilha = Math.max(
+          0,
+          duracaoBatalhaMs - (performance.now() - inicioBatalha)
+        );
+
+        // No fim da trilha: tela limpa + breve respiro, depois vitória
+        timerBatalha = window.setTimeout(() => {
+          if (finalizado) {
+            return;
+          }
+          if (timerSpawn) {
+            window.clearTimeout(timerSpawn);
+            timerSpawn = null;
+          }
+          limparAlvos();
+          timerRespiro = window.setTimeout(() => {
+            encerrar("vitoria");
+          }, RESPIRACAO_POS_TRILHA_MS);
+        }, restanteTrilha);
+      });
     }
 
     area.addEventListener("pointerdown", (evento) => {

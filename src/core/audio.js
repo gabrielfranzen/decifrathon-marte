@@ -350,16 +350,20 @@ export function pararArquivo() {
   interromperArquivoAtual();
 }
 
-// Soundtrack da batalha (loop); não é interrompida por SFX curtos
+// Duração conhecida do Battle-soundtrack.mp3 (fallback se metadata falhar)
+const DURACAO_TRILHA_BATALHA_MS = 40370;
+
+// Soundtrack da batalha (uma passagem); não é interrompida por SFX curtos
+// Resolve com a duração em ms pra o minigame sincronizar o fim
 export function tocarTrilhaBatalha() {
   pararTrilhaBatalha();
   const url = AUDIOS_ARQUIVO.battleSoundtrack;
   if (!url) {
-    return;
+    return Promise.resolve(DURACAO_TRILHA_BATALHA_MS);
   }
   try {
     const audio = new Audio(encodeURI(url));
-    audio.loop = true;
+    audio.loop = false;
     audio.volume = mudo ? 0 : 0.75;
     audioTrilhaBatalha = audio;
     const promessa = audio.play();
@@ -368,8 +372,30 @@ export function tocarTrilhaBatalha() {
         // Autoplay falhou — não trava o minigame
       });
     }
+
+    return new Promise((resolver) => {
+      let resolvido = false;
+      const finalizar = () => {
+        if (resolvido) {
+          return;
+        }
+        resolvido = true;
+        const segundos = audio.duration;
+        const ms =
+          Number.isFinite(segundos) && segundos > 1
+            ? Math.round(segundos * 1000)
+            : DURACAO_TRILHA_BATALHA_MS;
+        resolver(ms);
+      };
+      if (audio.readyState >= 1) {
+        finalizar();
+      } else {
+        audio.addEventListener("loadedmetadata", finalizar, { once: true });
+        window.setTimeout(finalizar, 900);
+      }
+    });
   } catch {
-    // Falhas de áudio não devem travar o jogo
+    return Promise.resolve(DURACAO_TRILHA_BATALHA_MS);
   }
 }
 

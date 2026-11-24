@@ -316,33 +316,15 @@ export function abrirPainelXadrez({ container, aoFechar, aoVencer } = {}) {
 
   const cabeca = criarElemento("div", "xadrez-frases");
   cabeca.append(
-    criarElemento("p", "frase-caca", "Encerre a guerra que nunca terminou."),
+    criarElemento("p", "frase-caca", "Aplique o último movimento."),
     criarElemento(
       "p",
       "frase-caca frase-menor",
-      "O último movimento ainda não foi dado."
+      "A partida ainda aguarda o lance final."
     )
   );
 
-  const acoes = criarElemento("div", "acoes-xadrez");
-  if (!concluido) {
-    const reiniciar = criarBotao(
-      "botao-texto botao-texto--secundario",
-      "Reiniciar tentativa do tabuleiro"
-    );
-    reiniciar.addEventListener("click", () => {
-      if (travado) {
-        return;
-      }
-      partida = criarPartida();
-      montarPecas();
-      desenharCasas();
-      definirMensagem("");
-    });
-    acoes.append(reiniciar);
-  }
-
-  painel.append(cabeca, cena3d, mensagem, acoes);
+  painel.append(cabeca, cena3d, mensagem);
   cena.append(painel);
   raiz.append(cena);
 
