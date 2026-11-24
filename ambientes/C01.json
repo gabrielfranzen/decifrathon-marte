@@ -75,7 +75,7 @@
     {
       "id": "escada",
       "tipo": "passagem",
-      "descricao": "Pergunta se quer seguir o cavaleiro; sem espada sobe ao C01B (morte)."
+      "descricao": "Sobe direto ao C01B: com espada luta; sem espada, morte."
     },
     {
       "id": "armario-esquerdo",

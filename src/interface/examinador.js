@@ -714,11 +714,233 @@ function criarPino(acao, indice, direcao, classeChevron, aoGirar) {
   return botao;
 }
 
+// Direção mais curta no alfabeto para animar a roda ao digitar
+function direcaoGiroEntre(de, para) {
+  const origem = ALFABETO.indexOf(String(de || "A").toUpperCase());
+  const destino = ALFABETO.indexOf(String(para || "A").toUpperCase());
+  if (origem < 0 || destino < 0 || origem === destino) {
+    return 0;
+  }
+  let delta = destino - origem;
+  if (delta > 13) {
+    delta -= 26;
+  }
+  if (delta < -13) {
+    delta += 26;
+  }
+  return delta > 0 ? 1 : -1;
+}
+
+function normalizarCombinacao(valor, quantidade) {
+  return String(valor || "")
+    .toUpperCase()
+    .replace(/[^A-Z]/g, "")
+    .slice(0, quantidade);
+}
+
+// Risquinhos sob o cadeado: digita em qualquer lugar com o examinador aberto
+function criarDigitacaoCadeado({
+  quantidade,
+  letrasIniciais,
+  desabilitado = false,
+  aoAlterar,
+  aoConfirmar,
+}) {
+  const raiz = document.createElement("div");
+  raiz.className = "cadeado-digitacao";
+  raiz.style.setProperty("--cadeado-digitos", String(quantidade));
+  raiz.setAttribute("role", "group");
+  raiz.setAttribute("aria-label", "Digite a combinação do cadeado");
+
+  const rotulo = document.createElement("p");
+  rotulo.className = "cadeado-digitacao__rotulo";
+  rotulo.textContent = "Ou digite a combinação";
+
+  const slots = document.createElement("div");
+  slots.className = "cadeado-digitacao__slots";
+  const celulas = [];
+  const letras = normalizarCombinacao((letrasIniciais || []).join(""), quantidade)
+    .padEnd(quantidade, "A")
+    .slice(0, quantidade)
+    .split("");
+  let posicao = 0;
+  let ativo = !desabilitado;
+
+  for (let indice = 0; indice < quantidade; indice += 1) {
+    const slot = document.createElement("button");
+    slot.type = "button";
+    slot.className = "cadeado-digitacao__slot";
+    slot.setAttribute("aria-label", `Letra ${indice + 1}`);
+    const letraEl = document.createElement("span");
+    letraEl.className = "cadeado-digitacao__letra";
+    const risco = document.createElement("span");
+    risco.className = "cadeado-digitacao__risco";
+    slot.append(letraEl, risco);
+    slot.addEventListener("click", () => {
+      if (!ativo) {
+        return;
+      }
+      posicao = indice;
+      pintarSlots();
+    });
+    slots.append(slot);
+    celulas.push({ slot, letra: letraEl });
+  }
+
+  function pintarSlots() {
+    for (let indice = 0; indice < quantidade; indice += 1) {
+      celulas[indice].letra.textContent = letras[indice] || "";
+      celulas[indice].slot.classList.toggle("preenchido", Boolean(letras[indice]));
+      celulas[indice].slot.classList.toggle("ativo", ativo && posicao === indice);
+      celulas[indice].slot.disabled = !ativo;
+    }
+  }
+
+  function aoTeclarDocumento(evento) {
+    if (!ativo || !raiz.isConnected) {
+      if (!raiz.isConnected) {
+        document.removeEventListener("keydown", aoTeclarDocumento);
+        document.removeEventListener("paste", aoColarDocumento);
+      }
+      return;
+    }
+
+    // Não intercepta se o foco estiver em outro campo de texto real
+    const alvo = evento.target;
+    if (
+      alvo &&
+      (alvo.tagName === "INPUT" ||
+        alvo.tagName === "TEXTAREA" ||
+        alvo.isContentEditable)
+    ) {
+      return;
+    }
+
+    // Setas nas rodas do cadeado continuam controlando as rodas
+    if (
+      alvo &&
+      alvo.classList &&
+      alvo.classList.contains("roda") &&
+      evento.key.startsWith("Arrow")
+    ) {
+      return;
+    }
+
+    if (evento.key === "Enter") {
+      evento.preventDefault();
+      if (typeof aoConfirmar === "function") {
+        aoConfirmar();
+      }
+      return;
+    }
+
+    if (evento.key === "Backspace" || evento.key === "Delete") {
+      evento.preventDefault();
+      if (evento.key === "Backspace") {
+        // Apaga a letra atual; se já for A, volta uma casa e apaga a anterior
+        if (letras[posicao] !== "A") {
+          letras[posicao] = "A";
+        } else if (posicao > 0) {
+          posicao -= 1;
+          letras[posicao] = "A";
+        }
+      } else {
+        letras[posicao] = "A";
+      }
+      if (typeof aoAlterar === "function") {
+        aoAlterar(letras.slice());
+      }
+      pintarSlots();
+      return;
+    }
+
+    if (evento.key === "ArrowLeft") {
+      evento.preventDefault();
+      posicao = Math.max(0, posicao - 1);
+      pintarSlots();
+      return;
+    }
+
+    if (evento.key === "ArrowRight") {
+      evento.preventDefault();
+      posicao = Math.min(quantidade - 1, posicao + 1);
+      pintarSlots();
+      return;
+    }
+
+    if (evento.key.length !== 1 || !/[a-zA-Z]/.test(evento.key)) {
+      return;
+    }
+
+    evento.preventDefault();
+    const letra = evento.key.toUpperCase();
+    letras[posicao] = letra;
+    if (typeof aoAlterar === "function") {
+      aoAlterar(letras.slice());
+    }
+    if (posicao < quantidade - 1) {
+      posicao += 1;
+    }
+    pintarSlots();
+  }
+
+  function aoColarDocumento(evento) {
+    if (!ativo || !raiz.isConnected) {
+      return;
+    }
+    const texto = normalizarCombinacao(
+      (evento.clipboardData || window.clipboardData)?.getData("text") || "",
+      quantidade
+    );
+    if (!texto) {
+      return;
+    }
+    evento.preventDefault();
+    for (let indice = 0; indice < texto.length; indice += 1) {
+      letras[indice] = texto[indice];
+    }
+    if (typeof aoAlterar === "function") {
+      aoAlterar(letras.slice());
+    }
+    posicao = Math.min(quantidade - 1, texto.length);
+    if (texto.length >= quantidade) {
+      posicao = quantidade - 1;
+    }
+    pintarSlots();
+  }
+
+  if (!desabilitado) {
+    document.addEventListener("keydown", aoTeclarDocumento);
+    document.addEventListener("paste", aoColarDocumento);
+  }
+
+  raiz.append(rotulo, slots);
+  pintarSlots();
+
+  return {
+    elemento: raiz,
+    atualizar(novasLetras) {
+      const texto = normalizarCombinacao((novasLetras || []).join(""), quantidade);
+      for (let indice = 0; indice < quantidade; indice += 1) {
+        letras[indice] = texto[indice] || letras[indice] || "A";
+      }
+      pintarSlots();
+    },
+    desabilitar() {
+      ativo = false;
+      document.removeEventListener("keydown", aoTeclarDocumento);
+      document.removeEventListener("paste", aoColarDocumento);
+      pintarSlots();
+    },
+  };
+}
+
 function montarCadeado(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   const estado = obterEstado();
   const rodas = [...estado.rodasE00];
   let travada = estado.e00Resolvido;
   const temporizadores = [];
+  let digitacao = null;
 
   const cadeado = document.createElement("div");
   cadeado.className = "cadeado";
@@ -769,6 +991,9 @@ function montarCadeado(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     tocar("giro");
     pintar(indice, direcao);
     definirRodas(rodas.slice());
+    if (digitacao) {
+      digitacao.atualizar(rodas);
+    }
   }
 
   function instalarRoda(botao, indice) {
@@ -867,6 +1092,35 @@ function montarCadeado(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   caixa.append(rebites, janela, ferrolho, lingueta);
   cadeado.append(argola, caixa);
 
+  digitacao = criarDigitacaoCadeado({
+    quantidade: 5,
+    letrasIniciais: rodas,
+    desabilitado: travada,
+    aoAlterar(letrasDigitadas) {
+      if (travada) {
+        return;
+      }
+      let mudou = false;
+      for (let indice = 0; indice < rodas.length; indice += 1) {
+        const nova = letrasDigitadas[indice];
+        if (!nova || nova === rodas[indice]) {
+          continue;
+        }
+        const direcao = direcaoGiroEntre(rodas[indice], nova) || 1;
+        rodas[indice] = nova;
+        pintar(indice, direcao);
+        mudou = true;
+      }
+      if (mudou) {
+        tocar("giro");
+        definirRodas(rodas.slice());
+      }
+    },
+    aoConfirmar() {
+      lingueta.click();
+    },
+  });
+
   function maisTarde(fn, atraso) {
     const id = window.setTimeout(fn, atraso);
     temporizadores.push(id);
@@ -900,6 +1154,7 @@ function montarCadeado(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     }
 
     travada = true;
+    digitacao.desabilitar();
     tocar("acerto");
     rodape.textContent = "O ferrolho cede.";
     haste.classList.add("presa");
@@ -916,7 +1171,7 @@ function montarCadeado(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     }, 900);
   });
 
-  corpo.append(cadeado);
+  corpo.append(cadeado, digitacao.elemento);
   rodape.textContent = travada ? "O cadeado já foi aberto." : "";
   rodas.forEach((_, indice) => pintar(indice, 0));
 }
@@ -926,6 +1181,7 @@ function montarCadeadoArmario(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   const rodas = [...estado.rodasE02];
   let travada = estado.e02Resolvido;
   const temporizadores = [];
+  let digitacao = null;
 
   const cadeado = document.createElement("div");
   cadeado.className = "cadeado";
@@ -976,6 +1232,9 @@ function montarCadeadoArmario(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     tocar("giro");
     pintar(indice, direcao);
     definirRodasE02(rodas.slice());
+    if (digitacao) {
+      digitacao.atualizar(rodas);
+    }
   }
 
   function instalarRoda(botao, indice) {
@@ -1074,6 +1333,35 @@ function montarCadeadoArmario(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   caixa.append(rebites, janela, ferrolho, lingueta);
   cadeado.append(argola, caixa);
 
+  digitacao = criarDigitacaoCadeado({
+    quantidade: 5,
+    letrasIniciais: rodas,
+    desabilitado: travada,
+    aoAlterar(letrasDigitadas) {
+      if (travada) {
+        return;
+      }
+      let mudou = false;
+      for (let indice = 0; indice < rodas.length; indice += 1) {
+        const nova = letrasDigitadas[indice];
+        if (!nova || nova === rodas[indice]) {
+          continue;
+        }
+        const direcao = direcaoGiroEntre(rodas[indice], nova) || 1;
+        rodas[indice] = nova;
+        pintar(indice, direcao);
+        mudou = true;
+      }
+      if (mudou) {
+        tocar("giro");
+        definirRodasE02(rodas.slice());
+      }
+    },
+    aoConfirmar() {
+      lingueta.click();
+    },
+  });
+
   function maisTarde(fn, atraso) {
     const id = window.setTimeout(fn, atraso);
     temporizadores.push(id);
@@ -1107,6 +1395,7 @@ function montarCadeadoArmario(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     }
 
     travada = true;
+    digitacao.desabilitar();
     tocar("acerto");
     rodape.textContent = "O ferrolho cede. O armário abre.";
     haste.classList.add("presa");
@@ -1123,7 +1412,7 @@ function montarCadeadoArmario(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     }, 900);
   });
 
-  corpo.append(cadeado);
+  corpo.append(cadeado, digitacao.elemento);
   rodape.textContent = travada ? "O armário já foi aberto." : "";
   rodas.forEach((_, indice) => pintar(indice, 0));
 }
@@ -1133,6 +1422,7 @@ function montarCadeadoCartas(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   const rodas = [...estado.rodasE01];
   let travada = estado.e01Resolvido || estado.gavetaCartasAberta;
   const temporizadores = [];
+  let digitacao = null;
 
   const cadeado = document.createElement("div");
   cadeado.className = "cadeado cadeado--quatro";
@@ -1183,6 +1473,9 @@ function montarCadeadoCartas(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     tocar("giro");
     pintar(indice, direcao);
     definirRodasE01(rodas.slice());
+    if (digitacao) {
+      digitacao.atualizar(rodas);
+    }
   }
 
   function instalarRoda(botao, indice) {
@@ -1281,6 +1574,35 @@ function montarCadeadoCartas(corpo, rodape, { aoFechar, aoAtualizarCena }) {
   caixa.append(rebites, janela, ferrolho, lingueta);
   cadeado.append(argola, caixa);
 
+  digitacao = criarDigitacaoCadeado({
+    quantidade: 4,
+    letrasIniciais: rodas,
+    desabilitado: travada,
+    aoAlterar(letrasDigitadas) {
+      if (travada) {
+        return;
+      }
+      let mudou = false;
+      for (let indice = 0; indice < rodas.length; indice += 1) {
+        const nova = letrasDigitadas[indice];
+        if (!nova || nova === rodas[indice]) {
+          continue;
+        }
+        const direcao = direcaoGiroEntre(rodas[indice], nova) || 1;
+        rodas[indice] = nova;
+        pintar(indice, direcao);
+        mudou = true;
+      }
+      if (mudou) {
+        tocar("giro");
+        definirRodasE01(rodas.slice());
+      }
+    },
+    aoConfirmar() {
+      lingueta.click();
+    },
+  });
+
   function maisTarde(fn, atraso) {
     const id = window.setTimeout(fn, atraso);
     temporizadores.push(id);
@@ -1314,6 +1636,7 @@ function montarCadeadoCartas(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     }
 
     travada = true;
+    digitacao.desabilitar();
     tocar("acerto");
     rodape.textContent = "O ferrolho cede. A gaveta abre.";
     haste.classList.add("presa");
@@ -1330,7 +1653,7 @@ function montarCadeadoCartas(corpo, rodape, { aoFechar, aoAtualizarCena }) {
     }, 900);
   });
 
-  corpo.append(cadeado);
+  corpo.append(cadeado, digitacao.elemento);
   rodape.textContent = travada ? "A gaveta já foi aberta." : "";
   rodas.forEach((_, indice) => pintar(indice, 0));
 }

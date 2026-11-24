@@ -1080,6 +1080,356 @@ button:focus-visible {
   border-color: #6a5a42;
 }
 
+/* Minigame de aparadas (luta C01B) */
+.minigame-aparadas {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.minigame-aparadas__escurecido {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  transition: background 0.35s ease;
+}
+
+.minigame-aparadas__escurecido--batalha {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.minigame-aparadas__area {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.minigame-aparadas__painel {
+  position: relative;
+  z-index: 2;
+  width: min(94vw, 42rem);
+  padding: 2.4rem 2.5rem 2rem;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #161310, #0d0b09);
+  border: 1px solid var(--cor-borda);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+  text-align: center;
+}
+
+.minigame-aparadas__titulo {
+  margin: 0 0 1.1rem;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(1.85rem, 3.2vw, 2.45rem);
+  font-weight: 600;
+  color: var(--cor-titulo);
+  line-height: 1.2;
+}
+
+.minigame-aparadas__texto {
+  margin: 0 auto 1.75rem;
+  max-width: 34rem;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  line-height: 1.45;
+  color: var(--cor-texto);
+}
+
+.minigame-aparadas__dicas {
+  display: flex;
+  justify-content: center;
+  gap: 1.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.85rem;
+}
+
+.minigame-aparadas__dica {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  width: 8.5rem;
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  line-height: 1.25;
+  color: var(--cor-texto-fraco);
+}
+
+.minigame-aparadas__dica-icone {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  border: 1px solid #5a5040;
+  background: #12100e;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+}
+
+.minigame-aparadas__dica-zona {
+  position: absolute;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 50%;
+  background: rgba(232, 210, 150, 0.5);
+  border: 1px solid rgba(240, 220, 170, 0.55);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.minigame-aparadas__dica-zona--pronta {
+  background: rgba(255, 230, 160, 0.55);
+  border-color: rgba(255, 230, 160, 0.7);
+}
+
+.minigame-aparadas__dica-nucleo {
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #e8dcc8, #8a7350 55%, #3a3228 100%);
+  border: 2px solid #d4c4a0;
+  box-shadow: 0 0 8px rgba(200, 170, 120, 0.35);
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+
+.minigame-aparadas__dica-nucleo--pronto {
+  border-color: #ffe6a8;
+  box-shadow: 0 0 12px rgba(255, 210, 120, 0.75);
+}
+
+.minigame-aparadas__dica-espada {
+  width: 0.55rem;
+  height: 0.85rem;
+  background: linear-gradient(180deg, #f2e8d4 0%, #a89878 55%, #5a5040 100%);
+  clip-path: polygon(50% 0%, 68% 18%, 62% 18%, 62% 72%, 78% 72%, 78% 82%, 22% 82%, 22% 72%, 38% 72%, 38% 18%, 32% 18%);
+}
+
+.minigame-aparadas__dica-anel {
+  position: absolute;
+  width: 4.15rem;
+  height: 4.15rem;
+  border-radius: 50%;
+  border: 2px solid rgba(232, 220, 190, 0.95);
+  box-shadow: 0 0 8px rgba(200, 180, 140, 0.3);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.minigame-aparadas__dica-anel--encaixe {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-color: #ffe6a8;
+  box-shadow: 0 0 10px rgba(255, 210, 120, 0.55);
+}
+
+.minigame-aparadas__continuar {
+  min-width: 12rem;
+  padding: 0.85rem 1.6rem;
+  border: 1px solid #6a5a42;
+  background: #2a2218;
+  color: #e8e0d4;
+  font: inherit;
+  font-size: clamp(1.15rem, 2vw, 1.35rem);
+  cursor: pointer;
+}
+
+.minigame-aparadas__continuar:hover,
+.minigame-aparadas__continuar:focus-visible {
+  border-color: #a89b82;
+  outline: none;
+}
+
+.minigame-aparadas__vidas {
+  position: absolute;
+  top: 1rem;
+  right: 1.1rem;
+  z-index: 3;
+  display: flex;
+  gap: 0.45rem;
+  pointer-events: none;
+}
+
+.minigame-aparadas__vida {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #c45a5a, #6a1818 70%);
+  border: 1px solid #3a1010;
+  box-shadow: 0 0 8px rgba(120, 20, 20, 0.45);
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.minigame-aparadas__vida--perdida {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+.minigame-aparadas__alvo {
+  position: absolute;
+  width: 5.25rem;
+  height: 5.25rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  cursor: crosshair;
+  z-index: 2;
+  overflow: visible;
+}
+
+/* Clique vale em todo o halo (não só no círculo do meio) */
+.minigame-aparadas__hit {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transform: scale(var(--escala-zona, 1.38));
+  z-index: 5;
+  cursor: crosshair;
+}
+
+/* Halo = área válida de aparar (~50% opacidade) */
+.minigame-aparadas__zona {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(232, 210, 150, 0.5);
+  border: 2px solid rgba(240, 220, 170, 0.55);
+  box-shadow: 0 0 18px rgba(220, 190, 130, 0.25);
+  transform: scale(var(--escala-zona, 1.38));
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Núcleo maior no centro, com ícone de espada */
+.minigame-aparadas__nucleo {
+  position: absolute;
+  inset: 10%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #f0e6d2, #9a8060 52%, #2e2820 100%);
+  border: 2px solid #e8d7b0;
+  box-shadow:
+    0 0 0 2px rgba(20, 16, 12, 0.65),
+    0 0 14px rgba(200, 170, 120, 0.4);
+  pointer-events: none;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+
+.minigame-aparadas__icone-espada {
+  width: 1rem;
+  height: 1.55rem;
+  background: linear-gradient(180deg, #f5eedc 0%, #c4b49a 40%, #8a7a62 70%, #4a4030 100%);
+  clip-path: polygon(
+    50% 2%,
+    62% 16%,
+    58% 16%,
+    58% 62%,
+    78% 62%,
+    78% 72%,
+    58% 72%,
+    58% 88%,
+    68% 88%,
+    68% 96%,
+    32% 96%,
+    32% 88%,
+    42% 88%,
+    42% 72%,
+    22% 72%,
+    22% 62%,
+    42% 62%,
+    42% 16%,
+    38% 16%
+  );
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.45));
+}
+
+/* Anel nasce bem longe e fecha; toca o halo no mesmo instante de antes */
+.minigame-aparadas__anel {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid rgba(245, 230, 190, 0.95);
+  box-shadow: 0 0 14px rgba(220, 190, 130, 0.35);
+  pointer-events: none;
+  transform: scale(var(--escala-inicio, 3.55));
+  opacity: 0.95;
+  z-index: 2;
+}
+
+.minigame-aparadas__anel--fecha {
+  animation: minigame-anel-fecha var(--janela-ms, 1100ms) linear forwards;
+}
+
+@keyframes minigame-anel-fecha {
+  0% {
+    transform: scale(var(--escala-inicio, 3.55));
+    opacity: 0.92;
+  }
+  /* Mesmo tempo até encostar no halo; trecho inicial mais longo = encolhe mais rápido */
+  72% {
+    transform: scale(var(--escala-zona, 1.38));
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Anel entrou na zona: halo e núcleo destacam */
+.minigame-aparadas__alvo--pronto .minigame-aparadas__zona {
+  background: rgba(255, 230, 160, 0.55);
+  border-color: rgba(255, 232, 170, 0.75);
+  box-shadow: 0 0 22px rgba(255, 210, 120, 0.45);
+}
+
+.minigame-aparadas__alvo--pronto .minigame-aparadas__nucleo {
+  border-color: #ffe9b0;
+  box-shadow:
+    0 0 0 2px rgba(20, 16, 12, 0.55),
+    0 0 22px rgba(255, 210, 120, 0.85);
+}
+
+.minigame-aparadas__alvo--pronto .minigame-aparadas__anel {
+  border-color: #ffe9b0;
+}
+
+.minigame-aparadas__alvo--acerto .minigame-aparadas__nucleo {
+  background: radial-gradient(circle at 40% 35%, #fff4d8, #c9a86a 60%, #5a4830 100%);
+  box-shadow: 0 0 22px rgba(255, 210, 140, 0.85);
+}
+
+.minigame-aparadas__alvo--erro .minigame-aparadas__nucleo {
+  background: radial-gradient(circle at 40% 35%, #ffb0b0, #8a2020 60%, #3a1010 100%);
+  box-shadow: 0 0 16px rgba(180, 40, 40, 0.65);
+}
+
+.minigame-aparadas--hit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: rgba(120, 0, 0, 0.28);
+  animation: minigame-flash-hit 0.28s ease-out forwards;
+}
+
+@keyframes minigame-flash-hit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* Flash de morte / espadada */
 .morte-flash {
   position: fixed;
@@ -2364,6 +2714,82 @@ button:focus-visible {
 .cadeado {
   width: min(640px, 100%);
   margin: 0 auto;
+}
+
+/* Digitação sob o cadeado (risquinhos; teclado global no examinador) */
+.cadeado-digitacao {
+  --cadeado-digitos: 5;
+  width: min(640px, 100%);
+  margin: 1.15rem auto 0;
+  text-align: center;
+}
+
+.cadeado-digitacao__rotulo {
+  display: block;
+  margin: 0 0 0.65rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a89f92;
+}
+
+.cadeado-digitacao__slots {
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.cadeado-digitacao__slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 1.9rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: text;
+  color: inherit;
+}
+
+.cadeado-digitacao__slot:disabled {
+  cursor: default;
+}
+
+.cadeado-digitacao__slot:focus-visible {
+  outline: none;
+}
+
+.cadeado-digitacao__letra {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 1.7rem;
+  font-family: var(--fonte-display);
+  font-size: 1.55rem;
+  line-height: 1;
+  color: #e8dfd0;
+}
+
+.cadeado-digitacao__risco {
+  width: 100%;
+  height: 2px;
+  margin-top: 0.28rem;
+  border-radius: 1px;
+  background: #6e675e;
+  transition: background 120ms ease, box-shadow 120ms ease;
+}
+
+.cadeado-digitacao__slot.ativo .cadeado-digitacao__risco {
+  background: #d9cbb5;
+  box-shadow: 0 0 0 1px rgba(217, 203, 181, 0.25);
+}
+
+.cadeado-digitacao__slot:disabled .cadeado-digitacao__letra {
+  color: #7a736a;
+}
+
+.cadeado-digitacao__slot:disabled .cadeado-digitacao__risco {
+  background: #4a453f;
 }
 
 .cadeado-argola {

@@ -19,7 +19,6 @@ import {
   criarHotspot,
   exibirMensagemTemporaria,
 } from "../interface/fotografia.js";
-import { abrirConfirmacao } from "../interface/confirmacao.js";
 import { abrirExaminador } from "../interface/examinador.js";
 import {
   definirLugar,
@@ -181,20 +180,12 @@ export async function criarC01({
           zIndex: 3,
         }),
         aoAtivar: () => {
-          tocar("papel");
-          abrirConfirmacao({
-            pergunta: "Você quer seguir o cavaleiro?",
-            rotuloCancelar: "Cancelar",
-            rotuloConfirmar: "Sim",
-            aoConfirmar: () => {
-              tocar("passo");
-              if (aoSubirEscada) {
-                aoSubirEscada();
-                return;
-              }
-              exibirMensagemTemporaria(cena, MSG_AINDA_NAO);
-            },
-          });
+          tocar("passo");
+          if (aoSubirEscada) {
+            aoSubirEscada();
+            return;
+          }
+          exibirMensagemTemporaria(cena, MSG_AINDA_NAO);
         },
       }),
       criarHotspot({

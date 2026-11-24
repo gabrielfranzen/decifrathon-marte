@@ -13,7 +13,7 @@ import { criarC02 } from "./cenas/c02.js";
 import { criarC02M } from "./cenas/c02m.js";
 import { criarC03 } from "./cenas/c03.js";
 import { criarC03G } from "./cenas/c03g.js";
-import { iniciarAudio, tocar, tocarArquivo } from "./core/audio.js";
+import { iniciarAudio, pararArquivo, tocar, tocarArquivo } from "./core/audio.js";
 import {
   carregarEstado,
   definirSalaAtual,
@@ -29,13 +29,15 @@ import {
   mostrarHud,
   velarTela,
 } from "./interface/hud.js";
+import { abrirMinigameAparadas } from "./interface/minigame-aparadas.js";
 import { instalarAtalhosModoDev } from "./interface/modo-dev.js";
 
 const DURACAO_FADE_MS = 500;
 const DURACAO_ESPADADA_MS = 1400;
 const DURACAO_FLASH_MS = 650;
-// Primeiro segundo do Blades = desembainhar (frame 01); resto = combate (frame 02)
+// 1s desembainhar (frame 01) + 2,5s combate (frame 02); depois corta o Blades e vai pra fuga
 const DURACAO_LUTA_DESEMBAINHAR_MS = 1000;
+const DURACAO_LUTA_COMBATE_MS = 2500;
 
 const app = document.getElementById("app");
 let cenaAtual = null;
@@ -175,8 +177,8 @@ async function executarLutaComEspada() {
 
   await mostrarCena(() => criarCenaLutaEspada(), { comVeil: true });
 
-  // Áudio único: 1s desembainhar (frame 01), depois combate (frame 02) até acabar
-  const audioBladesPronto = tocarArquivo("bladesClash");
+  // Blades: 1s desembainhar (01) + 2,5s combate (02); depois minigame
+  tocarArquivo("bladesClash");
   await aguardar(DURACAO_LUTA_DESEMBAINHAR_MS);
 
   if (cenaAtual) {
@@ -186,7 +188,14 @@ async function executarLutaComEspada() {
       "Choque de espadas com o perseguidor"
     );
   }
-  await audioBladesPronto;
+  await aguardar(DURACAO_LUTA_COMBATE_MS);
+  pararArquivo();
+
+  const resultado = await abrirMinigameAparadas();
+  if (resultado === "derrota") {
+    await dispararMorteReturnByDeath();
+    return;
+  }
 
   if (cenaAtual) {
     trocarFrameCutscene(
@@ -198,18 +207,12 @@ async function executarLutaComEspada() {
   // Frame de fuga dura o tempo do áudio de passos do cavaleiro
   await tocarArquivo("knightRunning");
 
-  // Fuga → pisca (veil) → corredor jogável (sem frame vazio no meio)
+  // Fuga → pisca (veil) → corredor jogável
   registrarLutaCorredorConcluida();
   irParaCorredorC01B();
 }
 
-async function executarMorteSemEspada() {
-  await mostrarCena(() => criarCenaMorteEspadada(), { comVeil: true });
-
-  // Som da espadada na imagem de morte
-  tocarArquivo("knifeSlash");
-  await aguardar(DURACAO_ESPADADA_MS);
-
+async function dispararMorteReturnByDeath() {
   const flash = document.createElement("div");
   flash.className = "morte-flash morte-flash--impacto";
   flash.setAttribute("aria-hidden", "true");
@@ -220,6 +223,16 @@ async function executarMorteSemEspada() {
   flash.classList.remove("morte-flash--impacto");
 
   await reiniciarAposMorte();
+}
+
+async function executarMorteSemEspada() {
+  await mostrarCena(() => criarCenaMorteEspadada(), { comVeil: true });
+
+  // Som da espadada na imagem de morte
+  tocarArquivo("knifeSlash");
+  await aguardar(DURACAO_ESPADADA_MS);
+
+  await dispararMorteReturnByDeath();
 }
 
 async function reiniciarAposMorte() {

@@ -316,15 +316,139 @@ export function estaMudo() {
 }
 
 const AUDIOS_ARQUIVO = {
-  returnByDeath: "assets/audios/RETURN BY DEATH SOUND EFFECT.mp3",
+  returnByDeath: "assets/audios/Return-by-death-sound-effect.mp3",
   knifeSlash: "assets/audios/Knife Slash.mp3",
   bladesClash: "assets/audios/Blades sound effect.mp3",
   knightRunning: "assets/audios/Knight running.mp3",
+  bladeParry1: "assets/audios/battle/Blade sound 1.mp3",
+  bladeParry2: "assets/audios/battle/Blade sound 2.mp3",
+  bladeParry3: "assets/audios/battle/Blade sound 3.mp3",
+  bladeHit: "assets/audios/battle/Blade hit sound.mp3",
+  battleSoundtrack: "assets/audios/battle/Battle-soundtrack.mp3",
 };
 
-let audioArquivoAtual = null;
+const NOMES_PARRY = ["bladeParry1", "bladeParry2", "bladeParry3"];
 
-// Toca um MP3/arquivo. Resolve quando o áudio termina (mesmo com mudo, volume 0).
+let audioArquivoAtual = null;
+let finalizarArquivoAtual = null;
+let audioTrilhaBatalha = null;
+
+function interromperArquivoAtual() {
+  if (audioArquivoAtual) {
+    audioArquivoAtual.pause();
+    audioArquivoAtual = null;
+  }
+  if (finalizarArquivoAtual) {
+    const finalizar = finalizarArquivoAtual;
+    finalizarArquivoAtual = null;
+    finalizar();
+  }
+}
+
+// Para o MP3 atual (ex.: cortar Blades no meio ao ir pra fuga).
+export function pararArquivo() {
+  interromperArquivoAtual();
+}
+
+// Soundtrack da batalha (loop); não é interrompida por SFX curtos
+export function tocarTrilhaBatalha() {
+  pararTrilhaBatalha();
+  const url = AUDIOS_ARQUIVO.battleSoundtrack;
+  if (!url) {
+    return;
+  }
+  try {
+    const audio = new Audio(encodeURI(url));
+    audio.loop = true;
+    audio.volume = mudo ? 0 : 0.75;
+    audioTrilhaBatalha = audio;
+    const promessa = audio.play();
+    if (promessa && typeof promessa.catch === "function") {
+      promessa.catch(() => {
+        // Autoplay falhou — não trava o minigame
+      });
+    }
+  } catch {
+    // Falhas de áudio não devem travar o jogo
+  }
+}
+
+export function pararTrilhaBatalha() {
+  if (!audioTrilhaBatalha) {
+    return;
+  }
+  audioTrilhaBatalha.pause();
+  audioTrilhaBatalha = null;
+}
+
+// SFX curto que não mata a trilha / tocarArquivo atual
+// opcoes.taxa: playbackRate (altera tom se preservesPitch=false)
+export function tocarSfxArquivo(nome, opcoes = {}) {
+  if (mudo) {
+    return;
+  }
+  const url = AUDIOS_ARQUIVO[nome];
+  if (!url) {
+    return;
+  }
+  try {
+    const audio = new Audio(encodeURI(url));
+    const taxa = Number(opcoes.taxa);
+    audio.playbackRate = Number.isFinite(taxa) && taxa > 0 ? taxa : 1;
+    // Sem preservar tom: taxa mais alta = metal mais agudo / mais baixo = mais grave
+    if ("preservesPitch" in audio) {
+      audio.preservesPitch = false;
+    }
+    if ("mozPreservesPitch" in audio) {
+      audio.mozPreservesPitch = false;
+    }
+    if ("webkitPreservesPitch" in audio) {
+      audio.webkitPreservesPitch = false;
+    }
+    const volumeBase = Number(opcoes.volume);
+    audio.volume = Number.isFinite(volumeBase)
+      ? Math.min(1, Math.max(0, volumeBase))
+      : 0.9;
+    const promessa = audio.play();
+    if (promessa && typeof promessa.catch === "function") {
+      promessa.catch(() => {});
+    }
+  } catch {
+    // Ignora falhas de SFX
+  }
+}
+
+let indiceParry = 0;
+
+// Perfis distintos pra cada Blade sound (mesmo arquivo-base soa diferente)
+const PERFIS_PARRY = [
+  { taxa: 0.86, volume: 0.92 },
+  { taxa: 1.0, volume: 0.88 },
+  { taxa: 1.18, volume: 0.95 },
+];
+
+// Alterna 1 → 2 → 3 e aplica tom/velocidade + micro-variação
+export function tocarParryAleatorio() {
+  const indice = indiceParry % NOMES_PARRY.length;
+  indiceParry += 1;
+  const perfil = PERFIS_PARRY[indice];
+  const jitter = 0.96 + Math.random() * 0.08;
+  tocarSfxArquivo(NOMES_PARRY[indice], {
+    taxa: perfil.taxa * jitter,
+    volume: perfil.volume * (0.94 + Math.random() * 0.08),
+  });
+}
+
+export function tocarHitEspada() {
+  // Hit também varia um pouco pra não ficar robótico
+  const jitter = 0.94 + Math.random() * 0.12;
+  tocarSfxArquivo("bladeHit", {
+    taxa: jitter,
+    volume: 0.9,
+  });
+}
+
+// Toca um MP3/arquivo. Resolve quando termina, erra ou é interrompido.
 export function tocarArquivo(nome) {
   const url = AUDIOS_ARQUIVO[nome];
   if (!url) {
@@ -332,10 +456,7 @@ export function tocarArquivo(nome) {
   }
 
   try {
-    if (audioArquivoAtual) {
-      audioArquivoAtual.pause();
-      audioArquivoAtual = null;
-    }
+    interromperArquivoAtual();
 
     const audio = new Audio(encodeURI(url));
     audioArquivoAtual = audio;
@@ -349,12 +470,16 @@ export function tocarArquivo(nome) {
           return;
         }
         finalizado = true;
+        if (finalizarArquivoAtual === finalizar) {
+          finalizarArquivoAtual = null;
+        }
         if (audioArquivoAtual === audio) {
           audioArquivoAtual = null;
         }
         resolver();
       };
 
+      finalizarArquivoAtual = finalizar;
       audio.addEventListener("ended", finalizar, { once: true });
       audio.addEventListener("error", finalizar, { once: true });
 

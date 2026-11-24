@@ -6,17 +6,17 @@
   "hotspots": [
     {
       "id": "frente",
-      "left": 32.05,
-      "top": 22.79,
-      "width": 36,
-      "height": 54.98,
+      "left": 42.11,
+      "top": 30.11,
+      "width": 15.52,
+      "height": 47.66,
       "zIndex": 3
     },
     {
       "id": "voltar",
-      "left": 38,
+      "left": 31.19,
       "top": 82.7,
-      "width": 24,
+      "width": 38.38,
       "height": 11.3,
       "zIndex": 4
     }
