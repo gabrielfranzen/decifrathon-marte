@@ -29,6 +29,8 @@ export const ESTADO_INICIAL = Object.freeze({
   portaPedraAberta: false,
   alavancasE03: [false, false, false, false, false, false, false, false],
   cartaAdagasColetada: false,
+  e04Resolvido: false,
+  finalVisto: false,
 });
 
 let estado = estruturarEstado({});
@@ -103,6 +105,8 @@ function estruturarEstado(parcial) {
   base.e03Resolvido = Boolean(base.e03Resolvido);
   base.portaPedraAberta = Boolean(base.portaPedraAberta);
   base.cartaAdagasColetada = Boolean(base.cartaAdagasColetada);
+  base.e04Resolvido = Boolean(base.e04Resolvido);
+  base.finalVisto = Boolean(base.finalVisto);
   base.anelExterno = normalizarIndice(base.anelExterno);
   base.anelInterno = normalizarIndice(base.anelInterno);
 
@@ -120,6 +124,10 @@ function estruturarEstado(parcial) {
 
   if (base.e03Resolvido) {
     base.portaPedraAberta = true;
+  }
+
+  if (base.e04Resolvido) {
+    base.finalVisto = base.finalVisto || false;
   }
 
   if (base.medalhaoColetado && !base.inventario.includes("medalhao")) {
@@ -214,7 +222,9 @@ export function carregarEstado() {
 }
 
 export function reiniciarEstado() {
-  estado = estruturarEstado({});
+  // Preserva o desbloqueio de “Ver o final” entre partidas novas
+  const finalJaVisto = Boolean(estado.finalVisto);
+  estado = estruturarEstado({ finalVisto: finalJaVisto });
   persistir();
   notificar();
   return obterEstado();
@@ -362,6 +372,18 @@ export function concluirE03() {
     false,
     true,
   ]);
+  persistir();
+  notificar();
+}
+
+export function concluirE04() {
+  estado.e04Resolvido = true;
+  persistir();
+  notificar();
+}
+
+export function marcarFinalVisto() {
+  estado.finalVisto = true;
   persistir();
   notificar();
 }

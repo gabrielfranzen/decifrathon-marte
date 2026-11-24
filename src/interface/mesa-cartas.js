@@ -4,7 +4,6 @@ import {
   obterEstado,
 } from "../core/estado.js";
 import {
-  CARTAS,
   FECHO_PISTAS,
   PISTAS,
   cartaPorId,
@@ -14,8 +13,20 @@ import {
 } from "../enigmas/e01.js";
 import { limparMensagensTemporarias } from "./fotografia.js";
 
-// Ordem fixa do baralho ao recolher / montar a mão
-const ORDEM_MAO_PADRAO = Object.freeze(CARTAS.map((carta) => carta.id));
+// Ordem fixa do baralho: cartas corretas intercaladas com iscas
+// (não deixar as 4 da resposta nas primeiras posições)
+const ORDEM_MAO_PADRAO = Object.freeze([
+  "copas-cinzas",
+  "espadas-sal",
+  "espadas",
+  "paus-eco",
+  "ouros-vazio",
+  "copas",
+  "espadas-sombra",
+  "ouros",
+  "copas-prece",
+  "paus",
+]);
 
 function maoNaOrdemPadrao(ids) {
   const conjunto = new Set(ids);

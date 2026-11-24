@@ -38,6 +38,9 @@ export const imagensAmbientes = {
   adagaCima: "assets/C01C/adaga-cima.jpg",
   adagaBaixo: "assets/C01C/adaga-baixo.jpg",
   cartaAdagas: "assets/C01C/C01C-carta-adagas.jpg",
+  // Sala do perseguidor + fundo da revelação final
+  c01d: "assets/C01D/C01D-sala-perseguidor.jpg",
+  c01dRevelacao: "assets/C01D/C01D-capacete-mesa.jpg",
 };
 
 export function obterImagemG00A({ portaPrincipalAberta }) {
@@ -137,4 +140,12 @@ export function obterImagemAlavanca(ligada) {
 
 export function obterImagemParedeTochas() {
   return imagensAmbientes.paredeTochas;
+}
+
+export function obterImagemC01D() {
+  return imagensAmbientes.c01d;
+}
+
+export function obterImagemRevelacaoC01D() {
+  return imagensAmbientes.c01dRevelacao;
 }

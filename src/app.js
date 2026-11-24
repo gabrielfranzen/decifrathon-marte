@@ -9,7 +9,8 @@ import {
   criarCenaMorteEspadada,
   trocarFrameCutscene,
 } from "./cenas/c01b.js";
-import { criarC01C, criarStubSalaCavaleiro } from "./cenas/c01c.js";
+import { criarC01C } from "./cenas/c01c.js";
+import { criarC01D } from "./cenas/c01d.js";
 import { criarC02 } from "./cenas/c02.js";
 import { criarC02M } from "./cenas/c02m.js";
 import { criarC03 } from "./cenas/c03.js";
@@ -33,6 +34,7 @@ import {
 } from "./interface/hud.js";
 import { abrirMinigameAparadas } from "./interface/minigame-aparadas.js";
 import { instalarAtalhosModoDev } from "./interface/modo-dev.js";
+import { iniciarRevelacao } from "./interface/revelacao.js";
 
 const DURACAO_FADE_MS = 500;
 const DURACAO_ESPADADA_MS = 1400;
@@ -170,21 +172,71 @@ function irParaC01C() {
     () =>
       criarC01C({
         aoVoltar: irParaCorredorC01B,
-        aoEntrar: irParaStubSalaCavaleiro,
+        aoEntrar: irParaC01D,
       }),
     { comVeil: true }
   );
 }
 
-function irParaStubSalaCavaleiro() {
+function irParaC01D() {
   tocar("passo");
   void mostrarCena(
     () =>
-      criarStubSalaCavaleiro({
+      criarC01D({
         aoVoltar: irParaC01C,
+        aoVencerXadrez: dispararRevelacaoFinal,
       }),
     { comVeil: true }
   );
+}
+
+function podeContinuarPartida(estado) {
+  return (
+    estado.salaAtual === "C02M" ||
+    estado.salaAtual === "C02" ||
+    estado.salaAtual === "C02Q" ||
+    estado.salaAtual === "C03" ||
+    estado.salaAtual === "C03G" ||
+    estado.salaAtual === "C01" ||
+    estado.salaAtual === "C01B" ||
+    estado.salaAtual === "C01C" ||
+    estado.salaAtual === "C01D" ||
+    estado.salaAtual === "G00" ||
+    estado.salaAtual === "G00A" ||
+    estado.e00Resolvido ||
+    estado.e01Resolvido ||
+    estado.e02Resolvido ||
+    estado.e03Resolvido ||
+    estado.e04Resolvido ||
+    estado.portaPrincipalAberta ||
+    estado.portaPedraAberta ||
+    estado.medalhaoColetado
+  );
+}
+
+function montarMenuPrincipal() {
+  const estado = obterEstado();
+  mostrarHud(false);
+  return mostrarCena(() =>
+    criarTelaInicial({
+      aoIniciar: () => {
+        iniciarAudio();
+        reiniciarEstado();
+        irParaIntroducao();
+      },
+      aoContinuar: podeContinuarPartida(estado) ? retomarPartida : null,
+      aoVerFinal: estado.finalVisto ? dispararRevelacaoFinal : null,
+    })
+  );
+}
+
+function dispararRevelacaoFinal() {
+  void iniciarRevelacao({
+    aoEncerrar: async () => {
+      definirSalaAtual("tela-inicial");
+      await montarMenuPrincipal();
+    },
+  });
 }
 
 function irParaC01B() {
@@ -383,7 +435,7 @@ function retomarPartida() {
   }
 
   if (estado.salaAtual === "C01D") {
-    irParaStubSalaCavaleiro();
+    irParaC01D();
     return;
   }
 
@@ -423,37 +475,8 @@ function iniciar() {
     window.dispatchEvent(new CustomEvent("oum:inventario"));
     irParaC01C();
   });
-  const estado = carregarEstado();
-  const podeContinuar =
-    estado.salaAtual === "C02M" ||
-    estado.salaAtual === "C02" ||
-    estado.salaAtual === "C02Q" ||
-    estado.salaAtual === "C03" ||
-    estado.salaAtual === "C03G" ||
-    estado.salaAtual === "C01" ||
-    estado.salaAtual === "C01B" ||
-    estado.salaAtual === "C01C" ||
-    estado.salaAtual === "C01D" ||
-    estado.salaAtual === "G00" ||
-    estado.salaAtual === "G00A" ||
-    estado.e00Resolvido ||
-    estado.e01Resolvido ||
-    estado.e02Resolvido ||
-    estado.e03Resolvido ||
-    estado.portaPrincipalAberta ||
-    estado.portaPedraAberta ||
-    estado.medalhaoColetado;
-
-  mostrarCena(() =>
-    criarTelaInicial({
-      aoIniciar: () => {
-        iniciarAudio();
-        reiniciarEstado();
-        irParaIntroducao();
-      },
-      aoContinuar: podeContinuar ? retomarPartida : null,
-    })
-  );
+  carregarEstado();
+  montarMenuPrincipal();
 }
 
 iniciar();

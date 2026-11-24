@@ -15,7 +15,7 @@ export const CARTAS = Object.freeze([
     nomeNaipe: "Copas",
     simbolo: "♥",
     numero: 2,
-    palavra: "MURMURIO",
+    palavra: "TUMBA",
   },
   {
     id: "ouros",

@@ -1,0 +1,57 @@
+{
+  "id": "C01D",
+  "nome": "Sala do Perseguidor",
+  "descricao": "O perseguidor espera à mesa com um tabuleiro de xadrez. Símbolo de Marte na parede; grande janela para o pátio. Clique no tabuleiro: enigma final (caçada do cavalo). Vitória → revelação CAVALEIRO.",
+  "imagem": "assets/C01D/C01D-sala-perseguidor.jpg",
+  "hotspots": [
+    {
+      "id": "perseguidor",
+      "left": 38,
+      "top": 18,
+      "width": 24,
+      "height": 36,
+      "zIndex": 3
+    },
+    {
+      "id": "tabuleiro",
+      "left": 36.15,
+      "top": 64.26,
+      "width": 27.55,
+      "height": 14.54,
+      "zIndex": 5
+    },
+    {
+      "id": "voltar",
+      "left": 36,
+      "top": 86,
+      "width": 28,
+      "height": 10,
+      "zIndex": 6
+    }
+  ],
+  "interacoes": [
+    {
+      "id": "perseguidor",
+      "tipo": "examinar",
+      "descricao": "O perseguidor espera em silêncio."
+    },
+    {
+      "id": "tabuleiro",
+      "tipo": "enigma",
+      "descricao": "Abre a Última Partida (caçada do cavalo)."
+    },
+    {
+      "id": "voltar",
+      "tipo": "passagem",
+      "descricao": "Volta à antecâmara (C01C)."
+    }
+  ],
+  "conexoes": [
+    {
+      "para": "C01C",
+      "via": "voltar",
+      "retorno": true
+    }
+  ],
+  "observacoes": "Final do jogo. Sem sala após o xeque-mate."
+}

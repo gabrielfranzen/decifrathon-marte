@@ -39,8 +39,6 @@ const MSG_PORTA_RESISTE =
   "A porta de pedra não cede. O mecanismo interno não se move.";
 const MSG_PORTA_CEDEU =
   "A porta cede um pouco. O vão escuro convida a entrar.";
-const MSG_STUB =
-  "Além da porta: a sala do cavaleiro ainda não foi mapeada.";
 
 function descricaoAlt(portaAberta, cartaColetada) {
   const carta = cartaColetada
@@ -231,9 +229,7 @@ export async function criarC01C({ aoVoltar, aoEntrar } = {}) {
             tocar("passo");
             if (aoEntrar) {
               aoEntrar();
-              return;
             }
-            exibirMensagemTemporaria(cena, MSG_STUB);
             return;
           }
 
@@ -272,54 +268,5 @@ export async function criarC01C({ aoVoltar, aoEntrar } = {}) {
   atualizarPropCarta();
   montarHotspots();
   window.dispatchEvent(new CustomEvent("oum:cena", { detail: { id: "C01C" } }));
-  return cena;
-}
-
-export async function criarStubSalaCavaleiro({ aoVoltar } = {}) {
-  definirSalaAtual("C01D");
-  garantirHud();
-  mostrarHud(true);
-  definirLugar("Sala do Cavaleiro");
-  iniciarAudio();
-  tocarAmbiente("pedra");
-
-  const { cena, camadaHotspots, imagem, placeholder } = criarCenaFotografica({
-    id: "c01d-stub",
-    ariaLabel: "C01D — Sala do cavaleiro (em construção)",
-    srcImagem: obterImagemC01C({ portaPedraAberta: true }),
-    altImagem: "Vão escuro além da porta de pedra — ambiente ainda não mapeado",
-    idPendente: "C01D",
-  });
-
-  imagem.style.filter = "brightness(0.22) saturate(0.4)";
-  placeholder.hidden = true;
-
-  camadaHotspots.append(
-    criarHotspot({
-      id: "voltar",
-      rotulo: "Voltar à antecâmara",
-      tipo: "passagem",
-      classeExtra: "hotspot-saida-fixa",
-      estilo: {
-        left: 36,
-        top: 86,
-        width: 28,
-        height: 10,
-        zIndex: 10,
-      },
-      aoAtivar: () => {
-        tocar("passo");
-        if (aoVoltar) {
-          aoVoltar();
-        }
-      },
-    })
-  );
-
-  window.setTimeout(() => {
-    exibirMensagemTemporaria(cena, MSG_STUB, 4200);
-  }, 400);
-
-  window.dispatchEvent(new CustomEvent("oum:cena", { detail: { id: "C01D" } }));
   return cena;
 }

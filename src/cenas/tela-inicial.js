@@ -1,6 +1,6 @@
 import { imagensAmbientes } from "../dados/imagens.js";
 
-export function criarTelaInicial({ aoIniciar, aoContinuar }) {
+export function criarTelaInicial({ aoIniciar, aoContinuar, aoVerFinal } = {}) {
   const cena = document.createElement("section");
   cena.className = "cena tela-inicial";
   cena.setAttribute("aria-label", "Tela inicial");
@@ -37,12 +37,25 @@ export function criarTelaInicial({ aoIniciar, aoContinuar }) {
   if (typeof aoContinuar === "function") {
     const botaoContinuar = document.createElement("button");
     botaoContinuar.type = "button";
-    botaoContinuar.className = "tela-inicial__opcao tela-inicial__opcao--secundaria";
+    botaoContinuar.className =
+      "tela-inicial__opcao tela-inicial__opcao--secundaria";
     botaoContinuar.textContent = "Continuar";
     botaoContinuar.addEventListener("click", () => {
       aoContinuar();
     });
     acoes.append(botaoContinuar);
+  }
+
+  if (typeof aoVerFinal === "function") {
+    const botaoFinal = document.createElement("button");
+    botaoFinal.type = "button";
+    botaoFinal.className =
+      "tela-inicial__opcao tela-inicial__opcao--secundaria";
+    botaoFinal.textContent = "Ver o final";
+    botaoFinal.addEventListener("click", () => {
+      aoVerFinal();
+    });
+    acoes.append(botaoFinal);
   }
 
   painel.append(titulo, acoes);
