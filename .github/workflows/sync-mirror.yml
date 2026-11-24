@@ -15,9 +15,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: push-to-mirror
         env:
           MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
         run: |
-          git remote add mirror "https://x-access-token:${MIRROR_TOKEN}@github.com/Oicanji/decifrathon-marte.git"
-          git push mirror HEAD:main --force
+          git push --force "https://x-access-token:${MIRROR_TOKEN}@github.com/Oicanji/decifrathon-marte.git" "HEAD:main"
