@@ -3860,7 +3860,8 @@ button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(8px, 1vw, 16px) clamp(8px, 1vw, 16px) 20px;
+  /* Folga embaixo pra o hotspot de sair não cobrir as casas da base */
+  padding: clamp(8px, 1vw, 16px) clamp(8px, 1vw, 16px) clamp(52px, 8vh, 72px);
   pointer-events: none;
   box-sizing: border-box;
 }
@@ -3881,7 +3882,12 @@ button:focus-visible {
     inset 0 0 0 12px #29180e;
 }
 
+/* Hitbox larga do hotspot não pode cobrir o tabuleiro — só a seta recebe clique */
 .xz-voltar {
+  pointer-events: none;
+}
+
+.xz-voltar .seta-saida {
   pointer-events: auto;
 }
 

@@ -1,6 +1,7 @@
 import {
   aoChegarMarcoTrilhaFinal,
   definirTaxaTrilhaFinal,
+  definirTempoTrilhaFinal,
   MARCO_CAVALEIRO_SEG,
   obterTempoTrilhaFinal,
   pararTrilhaFinal,
@@ -365,7 +366,7 @@ export async function iniciarRevelacao({
 
   sliderVelocidade.addEventListener("input", atualizarVelocidade);
 
-  // Encerra o rolo; se o marco já estiver perto, CAVALEIRO vem na sequência
+  // Fim natural do rolo: espera o beat da trilha em 2:55
   function encerrarCreditosAguardandoMarco() {
     if (creditosEncerrados || chaveMontada) {
       return;
@@ -389,6 +390,28 @@ export async function iniciarRevelacao({
     }, 500);
   }
 
+  // Pular: avança a trilha até o marco e revela CAVALEIRO no timing da música
+  function pularCreditosParaCavaleiro() {
+    if (creditosEncerrados || chaveMontada) {
+      return;
+    }
+    creditosEncerrados = true;
+    cancelarMarco();
+    rolo.removeEventListener("animationend", aoFimAnimacao);
+    controles.remove();
+    definirTaxaTrilhaFinal(1);
+    if (trilhaFinalAtiva()) {
+      definirTempoTrilhaFinal(MARCO_CAVALEIRO_SEG);
+    }
+    janela.classList.add("saindo");
+    window.setTimeout(() => {
+      if (chaveMontada) {
+        return;
+      }
+      montarChave();
+    }, 400);
+  }
+
   aoFimAnimacao = (evento) => {
     if (evento.target !== rolo || evento.animationName !== "xz-subir-creditos") {
       return;
@@ -396,7 +419,7 @@ export async function iniciarRevelacao({
     encerrarCreditosAguardandoMarco();
   };
 
-  pular.addEventListener("click", encerrarCreditosAguardandoMarco);
+  pular.addEventListener("click", pularCreditosParaCavaleiro);
   rolo.addEventListener("animationend", aoFimAnimacao);
   palco.replaceChildren(janela, controles);
   tocar("item");

@@ -512,6 +512,22 @@ export function obterTempoTrilhaFinal() {
   return audioTrilhaFinal?.currentTime || 0;
 }
 
+// Avança a trilha final para um ponto (ex.: pular créditos até o CAVALEIRO)
+export function definirTempoTrilhaFinal(segundos) {
+  if (!audioTrilhaFinal) {
+    return;
+  }
+  const alvo = Number(segundos);
+  if (!Number.isFinite(alvo) || alvo < 0) {
+    return;
+  }
+  const duracao = audioTrilhaFinal.duration;
+  const teto =
+    Number.isFinite(duracao) && duracao > 0 ? duracao : Number.POSITIVE_INFINITY;
+  audioTrilhaFinal.currentTime = Math.min(alvo, teto);
+  notificarMarcosTrilhaFinal();
+}
+
 export function trilhaFinalAtiva() {
   return Boolean(audioTrilhaFinal);
 }

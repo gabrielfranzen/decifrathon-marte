@@ -255,7 +255,12 @@ export function abrirPainelXadrez({
   }
 
   function animarLances(lances, ameaca) {
-    lances.forEach((estadoLance, i) => {
+    const fila = Array.isArray(lances) ? lances : [];
+    // Estado lógico já no fim das respostas; a fila só anima o caminho
+    if (fila.length) {
+      partida = fila[fila.length - 1];
+    }
+    fila.forEach((estadoLance, i) => {
       agendar(() => {
         partida = estadoLance;
         atualizarPecas();
@@ -265,7 +270,7 @@ export function abrirPainelXadrez({
     agendar(() => {
       marcarAmeaca(ameaca);
       travado = false;
-    }, 350 + lances.length * 600);
+    }, 350 + Math.max(1, fila.length) * 600);
   }
 
   function vencer() {
@@ -341,7 +346,13 @@ export function abrirPainelXadrez({
       return;
     }
 
-    partida = resultado.partida;
+    // Aplica já o estado pós-lance (com respostas inimigas) pra o próximo clique
+    // não depender da animação ter terminado de copiar a fila.
+    if (resultado.tipo === "avanco" && resultado.lances?.length) {
+      partida = resultado.lances[resultado.lances.length - 1];
+    } else {
+      partida = resultado.partida;
+    }
     agendar(() => {
       desenharCasas();
       if (resultado.tipo === "vitoria") {
@@ -361,6 +372,8 @@ export function abrirPainelXadrez({
 
   document.addEventListener("keydown", aoTeclar);
 
+  // Fora da área do tabuleiro: o hotspot em 90% cobria as casas da base
+  // (c1–f2) e engolia o 2º lance (ex.: g2) depois do primeiro avanço.
   raiz.append(
     criarHotspot({
       id: "voltar-xadrez",
@@ -368,10 +381,10 @@ export function abrirPainelXadrez({
       tipo: "passagem",
       classeExtra: "hotspot-saida-baixa xz-voltar",
       estilo: {
-        left: "36%",
-        top: "90%",
-        width: "28%",
-        height: "8%",
+        left: "38%",
+        top: "94%",
+        width: "24%",
+        height: "5%",
         zIndex: "20",
       },
       aoAtivar: () => {

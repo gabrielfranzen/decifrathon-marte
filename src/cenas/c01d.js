@@ -23,7 +23,7 @@ import {
   mostrarHud,
 } from "../interface/hud.js";
 import { anunciarItem } from "../interface/inventario.js";
-import { abrirPainelXadrez } from "../interface/painel-xadrez.js";
+import { abrirPainelXadrez } from "../interface/painel-ultima-partida.js";
 
 const MSG_PERSEGUIDOR =
   "Ele espera. A espada está no chão. O tabuleiro, entre vocês.";
