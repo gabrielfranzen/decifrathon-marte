@@ -3709,7 +3709,8 @@ button:focus-visible {
   flex-direction: column;
   overflow: auto;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% -20%, #2f2923, #0d0c0b 69%);
+  /* Mesma família da parede da antecâmara (gesso preto/carvão) */
+  background: radial-gradient(ellipse at 50% -10%, #1a1816, #050403 72%);
 }
 
 .ad-scene {
@@ -3727,17 +3728,19 @@ button:focus-visible {
 .ad-painel {
   width: 100%;
   pointer-events: auto;
-  border-radius: 12px;
+  border-radius: 4px;
   padding: clamp(18px, 2vw, 32px);
   box-sizing: border-box;
   color: #e8dcc4;
+  /* Amostra da parede C01C perto das adagas (~#0c0a08 / #080808) */
   background:
-    linear-gradient(180deg, #2a1d14ee, #140e0aee),
-    repeating-linear-gradient(92deg, #3a2718 0 7px, #312113 7px 12px);
+    radial-gradient(ellipse at 40% 20%, #141210 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 80%, #0a0908 0%, transparent 50%),
+    linear-gradient(180deg, #10100e, #080706 55%, #050403);
   box-shadow:
     0 28px 85px #000e,
-    inset 0 0 0 3px #725037,
-    inset 0 0 0 12px #29180e;
+    inset 0 0 0 1px #2a2622,
+    inset 0 0 40px #0008;
 }
 
 .ad-workspace {
