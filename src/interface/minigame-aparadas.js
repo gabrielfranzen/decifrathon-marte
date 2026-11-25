@@ -18,14 +18,14 @@ const MARGEM_PCT = 10;
 const DISTANCIA_MIN_PCT = 18;
 const DISTANCIA_ESPALHADA_PCT = 28;
 // Spawn rápido às vezes vira cluster; na maioria das vezes espalha pela tela
-const SPAWN_RAPIDO_MS = 620;
-const CHANCE_CLUSTER_NO_RAPIDO = 0.35;
+const SPAWN_RAPIDO_MS = 700;
+const CHANCE_CLUSTER_NO_RAPIDO = 0.28;
 const DISTANCIA_PERTO_MIN = 9;
 const DISTANCIA_PERTO_MAX = 16;
 // Gap mínimo entre momentos de clique (anel encostando) — dá pra acertar em sequência
-const GAP_CLIQUE_MS = 380;
+const GAP_CLIQUE_MS = 420;
 // Fração do tempo total em que o anel já está na zona válida (halo → centro)
-const JANELA_ACERTO_FRACAO = 0.28;
+const JANELA_ACERTO_FRACAO = 0.3;
 // Anel nasce bem maior (sensação de encolher mais rápido), mas chega no halo no mesmo tempo
 const ESCALA_ANEL_INICIO = 3.55;
 // Halo fixo (área válida) — não cresce com o start do anel
@@ -34,7 +34,7 @@ const ESCALA_ZONA = 1.65;
 const FOLGA_TOQUE_HALO = 0.05;
 // % da animação em que o anel toca o halo (mesmo pacing de antes)
 const PROGRESSO_TOQUE_HALO = 1 - JANELA_ACERTO_FRACAO;
-const MAX_ALVOS = 5;
+const MAX_ALVOS = 4;
 // Nos últimos 10s a dificuldade para de subir (fica no patamar já alcançado)
 const CONGELAR_DIFICULDADE_ULTIMOS_MS = 10000;
 
@@ -48,18 +48,22 @@ function intervaloAcertoMs(janelaMs) {
 // Progresso usado na curva: sobe até (duração − 10s), depois congela
 function progressoParaDificuldade(decorridoMs, duracaoMs) {
   const limiteMs = Math.max(0, duracaoMs - CONGELAR_DIFICULDADE_ULTIMOS_MS);
-  return Math.min(1, Math.max(0, Math.min(decorridoMs, limiteMs) / duracaoMs));
+  if (limiteMs <= 0) {
+    return 0;
+  }
+  // Escala só até o limite: nos últimos 10s o progresso (e a dificuldade) não sobe mais
+  return Math.min(1, Math.max(0, Math.min(decorridoMs, limiteMs) / limiteMs));
 }
 
 // Progresso 0..1 → dificuldade (ainda jogável); o teto vem de progressoParaDificuldade
 function obterDificuldade(progresso) {
   const p = Math.min(1, Math.max(0, progresso));
-  // Janela do anel: 1,25s → 0,78s
-  const janelaMs = 1250 - p * 470;
-  // Vários na tela cedo; sobe até 5 no fim
-  const maxSimultaneos = Math.min(MAX_ALVOS, 2 + Math.floor(p * 3.1));
+  // Janela do anel: 1,35s → 0,92s (um pouco mais generosa)
+  const janelaMs = 1350 - p * 430;
+  // Até 4 na tela no pico (antes ia a 5)
+  const maxSimultaneos = Math.min(MAX_ALVOS, 2 + Math.floor(p * 2.4));
   // Delay base entre spawns (sempre escalonado, nunca no mesmo frame)
-  const intervaloSpawnMs = 780 - p * 380;
+  const intervaloSpawnMs = 860 - p * 340;
   return { janelaMs, maxSimultaneos, intervaloSpawnMs };
 }
 
