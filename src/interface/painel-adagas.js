@@ -45,7 +45,7 @@ function criarBotaoAdaga(indice, ligadaInicial, bloqueada) {
       "aria-label",
       `Adaga D${indice + 1}${ligada ? ", ligada (cima)" : ", desligada (baixo)"}`
     );
-    figura.src = obterImagemAdaga(ligada);
+    figura.src = obterImagemAdaga();
   };
 
   botao.definir(ligadaInicial);

@@ -54,7 +54,7 @@ export const ITENS = {
     nome: "Mapa das adagas",
     descricao: "Rotina booleana das oito adagas da antecâmara.",
     inicial: "A",
-    imagem: "assets/inventario/objeto-carta-adagas.jpg",
+    imagem: "assets/C01C/C01C-carta-adagas.png",
   },
   elmo: {
     id: "elmo",

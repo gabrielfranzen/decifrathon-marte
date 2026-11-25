@@ -3627,6 +3627,16 @@ button:focus-visible {
   padding: 0.5rem 0 1rem;
 }
 
+.carta-adagas-reliquia {
+  display: block;
+  width: min(78vw, 24rem);
+  max-height: min(68vh, 32rem);
+  margin: 0 auto;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 12px 28px #000a;
+}
+
 .carta-pergaminho {
   position: relative;
   width: min(86vw, 32rem);
@@ -3790,17 +3800,24 @@ button:focus-visible {
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 10px 16px #000a);
-  transition: filter 0.2s ease, transform 0.2s ease;
+  transform: rotate(0deg);
+  transition: filter 0.2s ease, transform 0.28s ease;
 }
 
+/* Ligada = ponta para cima (sprite base vem ponta para baixo) */
 .ad-adaga.ligada .ad-adaga__figura {
+  transform: rotate(180deg);
   filter:
     drop-shadow(0 0 12px #d4a84a44)
     drop-shadow(0 10px 16px #000a);
 }
 
-.ad-adaga:hover:not(:disabled) .ad-adaga__figura {
+.ad-adaga:hover:not(:disabled):not(.ligada) .ad-adaga__figura {
   transform: translateY(-2px);
+}
+
+.ad-adaga.ligada:hover:not(:disabled) .ad-adaga__figura {
+  transform: rotate(180deg) translateY(2px);
 }
 
 .ad-voltar {

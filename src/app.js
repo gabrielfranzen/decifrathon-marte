@@ -536,6 +536,10 @@ function iniciar() {
   garantirHud();
   mostrarHud(false);
   instalarAtalhosModoDev();
+  window.addEventListener("oum:dev-pular-antecamara", () => {
+    iniciarAudio();
+    irParaC01C();
+  });
   window.addEventListener("oum:dev-pular-final", () => {
     void executarCenaFinalDesdeXadrez();
   });

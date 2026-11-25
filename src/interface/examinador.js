@@ -13,10 +13,8 @@ import {
   obterEstado,
   temItem,
 } from "../core/estado.js";
-import {
-  ROTINA as ROTINA_ADAGAS,
-  TITULO_CARTA_ADAGAS,
-} from "../enigmas/e03.js";
+import { TITULO_CARTA_ADAGAS } from "../enigmas/e03.js";
+import { obterImagemCartaAdagas } from "../dados/imagens.js";
 import {
   ALFABETO,
   deslocamentoEntre,
@@ -271,28 +269,22 @@ function montarRelatoArquivo(corpo, rodape, { relato = null, nasMaos = false } =
 }
 
 function montarCartaAdagas(corpo, rodape, { nasMaos = false } = {}) {
-  // Mesmo enquadramento da espada: objeto no centro + título + Fechar
   const palco = document.createElement("div");
   palco.className = "espada-palco carta-adagas-palco";
 
-  const folha = document.createElement("div");
-  folha.className = "carta-pergaminho carta-pergaminho--reliquia";
-  folha.setAttribute("aria-label", TITULO_CARTA_ADAGAS);
+  const figura = document.createElement("img");
+  figura.className = "carta-adagas-reliquia";
+  figura.src = obterImagemCartaAdagas();
+  figura.alt = TITULO_CARTA_ADAGAS;
+  figura.draggable = false;
+  palco.append(figura);
 
-  const rotina = document.createElement("pre");
-  rotina.className = "carta-pergaminho__rotina";
-  rotina.translate = false;
-  rotina.textContent = ROTINA_ADAGAS.join("\n");
-
-  folha.append(rotina);
-  palco.append(folha);
   corpo.append(palco);
-  rodape.textContent = "";
-  rodape.hidden = true;
-
+  rodape.textContent = nasMaos
+    ? "Rotina booleana das oito adagas da antecâmara."
+    : "";
   if (!nasMaos) {
-    // Coleta já acontece na parede; examinador só visualiza
-    return;
+    rodape.hidden = true;
   }
 }
 

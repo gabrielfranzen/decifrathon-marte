@@ -41,6 +41,7 @@ function garantirPainel() {
     <p class="modo-dev-painel__info" data-papel="info">—</p>
     <div class="modo-dev-painel__acoes">
       <button type="button" class="modo-dev-botao" data-acao="salvar">Salvar JSON</button>
+      <button type="button" class="modo-dev-botao" data-acao="pular-antecamara">Pular para a antecâmara</button>
       <button type="button" class="modo-dev-botao" data-acao="pular-final">Pular para o final</button>
       <button type="button" class="modo-dev-botao modo-dev-botao--secundario" data-acao="fechar">Fechar</button>
     </div>
@@ -48,6 +49,11 @@ function garantirPainel() {
 
   painel.querySelector('[data-acao="salvar"]').addEventListener("click", () => {
     void salvar();
+  });
+  painel.querySelector('[data-acao="pular-antecamara"]').addEventListener("click", () => {
+    definirModoDev(false);
+    window.dispatchEvent(new CustomEvent("oum:dev-pular-antecamara"));
+    void aviso("Modo Dev", "Indo para a antecâmara…");
   });
   painel.querySelector('[data-acao="pular-final"]').addEventListener("click", () => {
     definirModoDev(false);

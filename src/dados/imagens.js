@@ -37,9 +37,8 @@ export const imagensAmbientes = {
   alavancaLigada: "assets/C01C/alavanca-ligada.jpg",
   alavancaDesligada: "assets/C01C/alavanca-desligada.jpg",
   paredeTochas: "assets/C01C/C01C-parede-tochas.jpg",
-  adagaCima: "assets/C01C/adaga-cima.jpg",
-  adagaBaixo: "assets/C01C/adaga-baixo.jpg",
-  cartaAdagas: "assets/C01C/C01C-carta-adagas.jpg",
+  adaga: "assets/C01C/adaga.png",
+  cartaAdagas: "assets/C01C/C01C-carta-adagas.png",
   // Sala do perseguidor + fundo da revelação final
   c01d: "assets/C01D/C01D-sala-perseguidor.jpg",
   c01dRevelacao: "assets/C01D/C01D-capacete-mesa.jpg",
@@ -124,8 +123,8 @@ export function obterImagemC01C({ portaPedraAberta = false } = {}) {
     : imagensAmbientes.c01c;
 }
 
-export function obterImagemAdaga(ligada) {
-  return ligada ? imagensAmbientes.adagaCima : imagensAmbientes.adagaBaixo;
+export function obterImagemAdaga() {
+  return imagensAmbientes.adaga;
 }
 
 export function obterImagemCartaAdagas() {

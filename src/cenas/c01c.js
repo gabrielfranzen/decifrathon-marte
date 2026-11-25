@@ -23,6 +23,7 @@ import {
   garantirHud,
   mostrarHud,
 } from "../interface/hud.js";
+import { abrirExaminador } from "../interface/examinador.js";
 import { anunciarItem } from "../interface/inventario.js";
 
 const FALLBACK_CARTA = {
@@ -201,10 +202,16 @@ export async function criarC01C({ aoVoltar, aoEntrar } = {}) {
           rotulo: "Recolher a carta",
           estilo: estilo("carta", FALLBACK_CARTA),
           aoAtivar: () => {
+            tocar("papel");
             coletarCartaAdagas();
             window.dispatchEvent(new CustomEvent("oum:inventario"));
             anunciarItem("carta-adagas");
             refrescarCena();
+            abrirExaminador({
+              tipo: "carta-adagas",
+              nasMaos: true,
+              nomeObjeto: "Mapa das adagas",
+            });
           },
         })
       );
