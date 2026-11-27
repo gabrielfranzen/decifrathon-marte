@@ -148,6 +148,7 @@ export function abrirPainelAdagas({ container, aoFechar, aoAcerto } = {}) {
 
   document.addEventListener("keydown", aoTeclar);
 
+  // Clique só na seta (.ad-voltar); hitbox larga cobria a fileira de baixo no Chrome.
   raiz.append(
     criarHotspot({
       id: "voltar",
@@ -155,10 +156,10 @@ export function abrirPainelAdagas({ container, aoFechar, aoAcerto } = {}) {
       tipo: "passagem",
       classeExtra: "hotspot-saida-fixa ad-voltar",
       estilo: {
-        left: "36%",
-        top: "90%",
-        width: "28%",
-        height: "8%",
+        left: "42%",
+        top: "96%",
+        width: "16%",
+        height: "4%",
         zIndex: "20",
       },
       aoAtivar: () => {

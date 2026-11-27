@@ -388,13 +388,13 @@ button:focus-visible {
   position: absolute;
   left: 0;
   top: 0;
-  will-change: transform;
 }
 
 .mundo-parallax {
   position: absolute;
   inset: 0;
-  transform: scale(1.025) translate(var(--px, 0%), var(--py, 0%));
+  /* Sem scale(): no Chrome + DPI do Windows o scale desalinha hitbox dos hotspots */
+  transform: translate(var(--px, 0%), var(--py, 0%));
   transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
@@ -516,6 +516,8 @@ button:focus-visible {
 .camada-hotspots {
   position: absolute;
   inset: 0;
+  /* Acima de props/efeitos — senão mix-blend no Chrome engole o clique */
+  z-index: 5;
 }
 
 .hotspot {
@@ -526,10 +528,12 @@ button:focus-visible {
   padding: 0;
   border: 0;
   border-radius: 10px;
-  background: transparent;
+  /* rgba(0,0,0,0) em vez de transparent: hit-test mais estável no Chrome */
+  background-color: rgba(0, 0, 0, 0);
   min-width: 44px;
   min-height: 44px;
   z-index: 2;
+  cursor: pointer;
   transition: box-shadow 0.25s, background 0.25s;
 }
 
@@ -3707,7 +3711,8 @@ button:focus-visible {
   z-index: 8;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  /* overflow:auto + descendentes quebram hit-test no Chrome */
+  overflow: hidden;
   pointer-events: none;
   /* Mesma família da parede da antecâmara (gesso preto/carvão) */
   background: radial-gradient(ellipse at 50% -10%, #1a1816, #050403 72%);
@@ -3720,9 +3725,11 @@ button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(8px, 1vw, 16px) clamp(8px, 1vw, 16px) 20px;
+  /* Folga embaixo pra o hotspot de sair não cobrir as adagas */
+  padding: clamp(8px, 1vw, 16px) clamp(8px, 1vw, 16px) clamp(52px, 8vh, 72px);
   pointer-events: none;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 .ad-painel {
@@ -3823,7 +3830,12 @@ button:focus-visible {
   transform: rotate(180deg) translateY(2px);
 }
 
+/* Hitbox larga não pode cobrir as adagas — só a seta recebe clique */
 .ad-voltar {
+  pointer-events: none;
+}
+
+.ad-voltar .seta-saida {
   pointer-events: auto;
 }
 
@@ -3841,7 +3853,8 @@ button:focus-visible {
   z-index: 8;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  /* overflow:auto + rotateX/perspective quebram cliques em casas no Chrome */
+  overflow: hidden;
   pointer-events: none;
   background: radial-gradient(ellipse at 50% -20%, #2f2923, #0d0c0b 69%);
   opacity: 1;
@@ -3861,9 +3874,10 @@ button:focus-visible {
   align-items: center;
   justify-content: center;
   /* Folga embaixo pra o hotspot de sair não cobrir as casas da base */
-  padding: clamp(8px, 1vw, 16px) clamp(8px, 1vw, 16px) clamp(52px, 8vh, 72px);
+  padding: clamp(8px, 1vw, 16px) clamp(8px, 1vw, 16px) clamp(64px, 10vh, 88px);
   pointer-events: none;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 .xz-painel {
@@ -3930,7 +3944,6 @@ button:focus-visible {
   display: flex;
   justify-content: center;
   padding: 0.6rem 0 1.2rem;
-  perspective: 1200px;
 }
 
 .tabuleiro-moldura {
@@ -3942,9 +3955,7 @@ button:focus-visible {
   background-size: cover;
   background-position: center;
   box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), inset 0 0 0 2px #1f130a;
-  transform: rotateX(22deg);
-  transform-origin: 50% 70%;
-  transform-style: preserve-3d;
+  /* Sem rotateX/perspective: no Chrome o hit-test das casas falhava em parte do tabuleiro */
 }
 
 .tabuleiro-moldura.alerta {
@@ -3952,16 +3963,15 @@ button:focus-visible {
 }
 
 @keyframes xz-tremer {
-  0%, 100% { transform: rotateX(22deg) translateX(0); }
-  25% { transform: rotateX(22deg) translateX(-6px); }
-  75% { transform: rotateX(22deg) translateX(6px); }
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
 }
 
 .palco-xadrez {
   position: relative;
   width: min(520px, 80vw);
   aspect-ratio: 1;
-  transform-style: preserve-3d;
 }
 
 .grade-xadrez {
@@ -4040,7 +4050,6 @@ button:focus-visible {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  transform-style: preserve-3d;
 }
 
 .peca {
@@ -4053,14 +4062,13 @@ button:focus-visible {
   align-items: flex-end;
   justify-content: center;
   transition: transform 0.42s cubic-bezier(0.3, 0.7, 0.3, 1), opacity 0.4s;
-  transform-style: preserve-3d;
 }
 
 .peca-figura {
   display: block;
   font-size: clamp(1.6rem, 4.6vw, 2.7rem);
   line-height: 1;
-  transform: rotateX(-22deg) translateY(-6%);
+  transform: translateY(-6%);
   transform-origin: 50% 100%;
 }
 
@@ -4089,7 +4097,7 @@ button:focus-visible {
 }
 
 .peca.caida .peca-figura {
-  transform: rotateX(-22deg) rotate(80deg) translateY(10%);
+  transform: rotate(80deg) translateY(10%);
   opacity: 0.4;
   transition: transform 0.5s, opacity 0.5s;
 }

@@ -176,11 +176,11 @@ export async function criarC01C({ aoVoltar, aoEntrar } = {}) {
         id: "adagas",
         rotulo: "Examinar as adagas",
         estilo: estilo("adagas", {
-          left: 27,
-          top: 28,
-          width: 12,
-          height: 34,
-          zIndex: 4,
+          left: 26.5,
+          top: 18,
+          width: 13,
+          height: 38,
+          zIndex: 6,
         }),
         aoAtivar: () => {
           tocar("passo");

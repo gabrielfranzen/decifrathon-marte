@@ -372,8 +372,8 @@ export function abrirPainelXadrez({
 
   document.addEventListener("keydown", aoTeclar);
 
-  // Fora da área do tabuleiro: o hotspot em 90% cobria as casas da base
-  // (c1–f2) e engolia o 2º lance (ex.: g2) depois do primeiro avanço.
+  // Bem abaixo do tabuleiro: hitbox larga no Chrome cobria a base (c1–g2).
+  // Clique só na seta (.xz-voltar { pointer-events: none }).
   raiz.append(
     criarHotspot({
       id: "voltar-xadrez",
@@ -381,10 +381,10 @@ export function abrirPainelXadrez({
       tipo: "passagem",
       classeExtra: "hotspot-saida-baixa xz-voltar",
       estilo: {
-        left: "38%",
-        top: "94%",
-        width: "24%",
-        height: "5%",
+        left: "42%",
+        top: "96%",
+        width: "16%",
+        height: "4%",
         zIndex: "20",
       },
       aoAtivar: () => {
